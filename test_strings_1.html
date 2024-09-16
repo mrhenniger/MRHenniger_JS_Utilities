@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MRHenniger JS Utilities - Test: Strings</title>
+    <link rel="stylesheet" type="text/css" href="basic.css">
+    <script src="strings.js"></script>
+    <script src="testUtilities.js"></script>
+    <script>
+        function pageLoaded() {
+            testLabel('Constructor');
+            let result = new Strings();
+            testCompare("Test 1a - Strings(undefined)", '', result.str());
+            result = new Strings('');
+            testCompare("Test 1b - Strings('')", '', result.str());
+            result = new Strings('abc123');
+            testCompare("Test 1c - Strings('abc123')", 'abc123', result.str());
+            result = new Strings(123);
+            testCompare("Test 1d - Strings(123)", '123', result.str());
+            result = new Strings(true);
+            testCompare("Test 1e - Strings(true)", 'true', result.str());
+            result = new Strings(false);
+            testCompare("Test 1f - Strings(false)", 'false', result.str());
+            let stimulus = new Strings('abc123');
+            result = new Strings(stimulus);
+            testCompare("Test 1g - Strings(stimulus)", 'abc123', result.str());
+
+            testLabel('String Examination');
+            let subject = new Strings('abcdef');
+            testCompare("Test 2a - count() 0", 0, subject.count('123'));
+            subject = new Strings('abc123def');
+            testCompare("Test 2b - count() 1", 1, subject.count('123'));
+            subject = new Strings('abc123def123ghi');
+            testCompare("Test 2c - count() 3", 2, subject.count('123'));
+            subject = new Strings('');
+            testCompare("Test 2d - starts()", false, subject.starts('123'));
+            testCompare("Test 2e - ends()", false, subject.ends('123'));
+            testCompare("Test 2f - contains()", false, subject.contains('123'));
+            subject = new Strings('abc123def');
+            testCompare("Test 2g - starts()", false, subject.starts(''));
+            testCompare("Test 2h - starts()", false, subject.starts('xxx'));
+            testCompare("Test 2i - starts()", true, subject.starts('abc'));
+            testCompare("Test 2j - ends()", false, subject.ends(''));
+            testCompare("Test 2k - ends()", false, subject.ends('xxx'));
+            testCompare("Test 2l - ends()", true, subject.ends('def'));
+            testCompare("Test 2m - starts()", false, subject.contains(''));
+            testCompare("Test 2n - starts()", false, subject.contains('xxx'));
+            testCompare("Test 2o - starts()", true, subject.contains('abc'));
+
+            testLabel('String Manipulation');
+            subject = new Strings('abc');
+            testCompare("Test 3a - prepend()", '123abc', subject.prepend('123').str());
+            subject = new Strings('abc');
+            testCompare("Test 3b - append()", 'abc123', subject.append('123').str());
+            subject = new Strings('');
+            testCompare("Test 3c - ltrim()", '', subject.ltrim('abc').str());
+            testCompare("Test 3d - rtrim()", '', subject.rtrim('abc').str());
+            testCompare("Test 3e - trim()", '', subject.trim('abc').str());
+            subject = new Strings('abc123');
+            testCompare("Test 3f - ltrim()", 'abc123', subject.ltrim('xxxxxxxxx').str());
+            testCompare("Test 3g - rtrim()", 'abc123', subject.rtrim('xxxxxxxxx').str());
+            testCompare("Test 3h - trim()", 'abc123', subject.trim('xxxxxxxxx').str());
+            subject = new Strings('abc123');
+            testCompare("Test 3i - ltrim()", 'abc123', subject.ltrim('xxx').str());
+            testCompare("Test 3j - rtrim()", 'abc123', subject.rtrim('xxx').str());
+            testCompare("Test 3k - trim()", 'abc123', subject.trim('xxx').str());
+            subject = new Strings('abc123');
+            testCompare("Test 3l - ltrim()", '123', subject.ltrim('abc').str());
+            subject = new Strings('abcabc123');
+            testCompare("Test 3m - ltrim()", '123', subject.ltrim('abc').str());
+            subject = new Strings('abc123');
+            testCompare("Test 3n - rtrim()", 'abc', subject.rtrim('123').str());
+            subject = new Strings('abc123123');
+            testCompare("Test 3o - rtrim()", 'abc', subject.rtrim('123').str());
+            subject = new Strings('123abc123');
+            testCompare("Test 3p - trim()", 'abc', subject.trim('123').str());
+            subject = new Strings('123123abc123123');
+            testCompare("Test 3q - trim()", 'abc', subject.trim('123').str());
+            subject = new Strings('   abc');
+            testCompare("Test 3r - trim()", 'abc', subject.trim().str());
+            subject = new Strings('abc   ');
+            testCompare("Test 3s - trim()", 'abc', subject.trim().str());
+            subject = new Strings('   abc   ');
+            testCompare("Test 3t - trim()", 'abc', subject.trim().str());
+            subject = new Strings(' x\n\rx\r\nx \nx\n x \tx\t x  x ');
+            testCompare("Test 3u - trim()", ' x\nx\nx\nx\nx\tx\tx x ', subject.whitespaceCondense().str());
+            subject = new Strings('abctarget123');
+            testCompare("Test 3v - stripBeforeTag()", 'abctarget123', subject.stripBeforeTag('').str());
+            subject = new Strings('abctarget123');
+            testCompare("Test 3w - stripBeforeTag()", '123', subject.stripBeforeTag('target').str());
+            subject = new Strings('abctarget123');
+            testCompare("Test 3x - stripAfterTag()", 'abctarget123', subject.stripAfterTag('').str());
+            subject = new Strings('abctarget123');
+            testCompare("Test 3y - stripAfterTag()", 'abc', subject.stripAfterTag('target').str());
+            subject = new Strings('axbxcxdxexf');
+            result = subject.explode('');
+            testCompare("Test 3z - explode()", 'axbxcxdxexf', result[0].str());
+            result = subject.explode('x');
+            testCompare("Test 3aa1 - explode()", 6, result.length);
+            testCompare("Test 3aa2 - explode()", 'a', result[0].str());
+            testCompare("Test 3aa3 - explode()", 'f', result[5].str());
+            subject = new Strings('xaxbxcxdxexfx');
+            result = subject.explode('x');
+            testCompare("Test 3ab1 - explode()", 8, result.length);
+            testCompare("Test 3ab2 - explode()", '', result[0].str());
+            testCompare("Test 3ab3 - explode()", 'a', result[1].str());
+            testCompare("Test 3ab4 - explode()", 'f', result[6].str());
+            testCompare("Test 3ab5 - explode()", '', result[7].str());
+            subject = new Strings('initial condition');
+            subject.implode('glue', []);
+            testCompare("Test 3ac - implode()", '', subject.str());
+            subject = new Strings('initial condition');
+            subject.implode('', [new Strings('a')]);
+            testCompare("Test 3ad - implode()", 'a', subject.str());
+            subject = new Strings('initial condition');
+            subject.implode('', [new Strings('a'), new Strings('b'), new Strings('c')]);
+            testCompare("Test 3ae - implode()", 'abc', subject.str());
+            subject = new Strings('initial condition');
+            subject.implode('x', [new Strings('a'), new Strings('b'), new Strings('c')]);
+            testCompare("Test 3af - implode()", 'axbxc', subject.str());
+
+            testLabel('Conversion/Condition Functions');
+            subject = new Strings('<div class="thing">stuff</div></br>');
+            testCompare("Test 4a - stripHtml()", 'stuff', subject.stripHtml().str());
+            subject = new Strings('stuff & thangs');
+            testCompare("Test 4b - conditionForXML()", 'stuff  and  thangs', subject.conditionForXML().str());
+            stimulus = ['abc', 123, null, true, false];
+            testCompare("Test 4c - jsonStringify()", '["abc","123",null,true,false]', subject.jsonStringify(stimulus).str());
+            stimulus = {
+                aString: 'abc',
+                aNumber: 123,
+                aNull: null,
+                aTrue: true,
+                aFalse: false,
+            };
+            testCompare("Test 4d - jsonStringify()", '{"aString":"abc","aNumber":"123","aNull":null,"aTrue":true,"aFalse":false}', subject.jsonStringify(stimulus).str());
+            stimulus = {
+                aString: 'abc',
+                aNumber: 123,
+                aNull: null,
+                aTrue: true,
+                aFalse: false,
+                anArray: [1,2,3,'a','b','c'],
+            };
+            subject.jsonStringify(stimulus);
+            result = subject.jsonParse();
+            testCompare("Test 4e1 - jsonStringify()", 'abc', result.aString);
+            testCompare("Test 4e2 - jsonStringify()", '123', result.aNumber);
+            testCompare("Test 4e3 - jsonStringify()", null, result.aNull);
+            testCompare("Test 4e4 - jsonStringify()", true, result.aTrue);
+            testCompare("Test 4e5 - jsonStringify()", false, result.aFalse);
+            testCompare("Test 4e6 - jsonStringify()", 6, result.anArray.length);
+            testCompare("Test 4e7 - jsonStringify()", '1', result.anArray[0]);
+            testCompare("Test 4e8 - jsonStringify()", '2', result.anArray[1]);
+            testCompare("Test 4e9 - jsonStringify()", '3', result.anArray[2]);
+            testCompare("Test 4e10 - jsonStringify()", 'a', result.anArray[3]);
+            testCompare("Test 4e11 - jsonStringify()", 'b', result.anArray[4]);
+            testCompare("Test 4e12 - jsonStringify()", 'c', result.anArray[5]);
+
+            testLabel('Miscellaneous');
+            subject = new Strings('');
+            testCompare("Test 9a - isEmpty()", true, subject.isEmpty());
+            subject = new Strings('abc123');
+            let equal = new Strings('abc123');
+            testCompare("Test 9b - equals() true", true, subject.equals(equal));
+            let notEqual = new Strings('definitely not equal');
+            testCompare("Test 9c - equals() false", false, subject.equals(notEqual));
+            subject = new Strings('<div class="thing">&stuff & thangs&</div></br>');
+            testCompare("Test 9d - htmlspecialchars()", '&lt;div class=&quot;thing&quot;&gt;&amp;stuff &amp; thangs&amp;&lt;/div&gt;&lt;/br&gt;', subject.htmlspecialchars().str());
+            let notValidEmail = new Strings('clearly not valid');
+            testCompare("Test 9e - isValidEmail() false", false, notValidEmail.isValidEmail());
+            let isValidEmail = new Strings('mike.henniger@bogus.com');
+            testCompare("Test 9f - isValidEmail() true", true, isValidEmail.isValidEmail());
+            subject = new Strings('');
+            testCompare("Test 9g1 - getPasswordStrengthError()", 'Missing password', subject.getPasswordStrengthError().str());
+            subject = new Strings('aA1*');
+            testCompare("Test 9g2 - getPasswordStrengthError()", 'Minimum password length is 8 characters', subject.getPasswordStrengthError().str());
+            subject = new Strings('aaaAAA111***');
+            testCompare("Test 9g3 - getPasswordStrengthError()", '', subject.getPasswordStrengthError().str());
+            subject = new Strings('AAA111***');
+            testCompare("Test 9g4 - getPasswordStrengthError()", true, subject.getPasswordStrengthError().starts('Missing a lower case letter.'));
+            subject = new Strings('aaa111***');
+            testCompare("Test 9g5 - getPasswordStrengthError()", true, subject.getPasswordStrengthError().starts('Missing an upper case letter.'));
+            subject = new Strings('aaaAAA***');
+            testCompare("Test 9g6 - getPasswordStrengthError()", true, subject.getPasswordStrengthError().starts('Missing a number.'));
+            subject = new Strings('aaaAAA111');
+            testCompare("Test 9g7 - getPasswordStrengthError()", true, subject.getPasswordStrengthError().starts('Missing a symbol.'));
+            subject = new Strings('original');
+            testCompare("Test 9h1 - random()", 10, subject.random().str().length);
+            testCompare("Test 9h2 - random()", 15, subject.random(15).str().length);
+        }
+    </script>
+</head>
+<body onload="pageLoaded();">
+<div class="font20 fontBold fontBlack fontArial">MRHenniger JS Utilities - Test: Strings</div></br>
+</br>
+<div id="output" class="font18 fontNorm fontBlack fontArial"></div>
+</body>
+</html>

@@ -1,12 +1,8 @@
-class Dom implements Named {
-    className: string;
-    private __core: null|object;
+"use strict";
+class Dom {
     // other member data goes here
-
     constructor() {
         this.className = "Dom";
         this.__core = null;
     }
-
-
 }
