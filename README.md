@@ -15,4 +15,6 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V1 - September 15 - First draft of the TypeScript version of my Strings class in strings.js.  Look for the tests in test_strings_1.html.
+
 V0 - September 13 - Just getting the original JS files under source control.  They won't make much sense without the tests to go with them.
