@@ -9,7 +9,7 @@
     Feedback:  Constructive criticism is always well received and appreciated.
 
     Future version:  I plan to add to this class as I have ideas and/or find the need.  If you would like to suggest
-                     additions, I would very much like to hear from you.
+                     additional features, I would very much like to hear from you.
  */
 class Strings implements Named {
     className: string;
@@ -20,8 +20,6 @@ class Strings implements Named {
      * Function:  constructor
      *
      * @param  any  Element to be converted to a string.
-     *
-     * @return  Strings  Element converted as a string.
      */
     constructor(ref: any = '') {
         this.className = "Strings";
@@ -88,8 +86,12 @@ class Strings implements Named {
      *
      * @return  boolean  The string matches (true) or it doesn't (false).
      */
-    public equals(rightSide: Strings): boolean {
-        return this.__core === rightSide.str();
+    public equals(rightSide: string|Strings): boolean {
+        if (typeof rightSide === 'string') {
+            return this.__core === rightSide;
+        } else {
+            return this.__core === rightSide.str();
+        }
     }
 
     /*
@@ -419,7 +421,8 @@ class Strings implements Named {
 
         let bitsSize = bits.length;
         for(let index=0; index<bitsSize; index++) {
-            bits[index] = typeof bits[index] !== 'string' ? bits[index].str() : bits[index];
+            // @ts-ignore - The following line is constructed correctly.
+            bits[index] =  bits[index]?.className === 'Strings' ? bits[index].str() : bits[index];
         }
 
         if (bitsSize === 1) {

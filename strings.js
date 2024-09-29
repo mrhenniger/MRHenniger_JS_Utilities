@@ -10,7 +10,7 @@
     Feedback:  Constructive criticism is always well received and appreciated.
 
     Future version:  I plan to add to this class as I have ideas and/or find the need.  If you would like to suggest
-                     additions, I would very much like to hear from you.
+                     additional features, I would very much like to hear from you.
  */
 class Strings {
     // other member data goes here
@@ -18,8 +18,6 @@ class Strings {
      * Function:  constructor
      *
      * @param  any  Element to be converted to a string.
-     *
-     * @return  Strings  Element converted as a string.
      */
     constructor(ref = '') {
         this.className = "Strings";
@@ -91,7 +89,12 @@ class Strings {
      * @return  boolean  The string matches (true) or it doesn't (false).
      */
     equals(rightSide) {
-        return this.__core === rightSide.str();
+        if (typeof rightSide === 'string') {
+            return this.__core === rightSide;
+        }
+        else {
+            return this.__core === rightSide.str();
+        }
     }
     /*
      * Function:  count
@@ -365,6 +368,7 @@ class Strings {
      * @return  Strings  The resulting joined string.
      */
     implode(glue, bits) {
+        var _a;
         if (bits.length === 0) {
             this.__core = '';
             return this;
@@ -372,7 +376,8 @@ class Strings {
         glue = typeof glue !== 'string' ? glue.str() : glue;
         let bitsSize = bits.length;
         for (let index = 0; index < bitsSize; index++) {
-            bits[index] = typeof bits[index] !== 'string' ? bits[index].str() : bits[index];
+            // @ts-ignore - The following line is constructed correctly.
+            bits[index] = ((_a = bits[index]) === null || _a === void 0 ? void 0 : _a.className) === 'Strings' ? bits[index].str() : bits[index];
         }
         if (bitsSize === 1) {
             this.__core = typeof bits[0] !== 'string' ? bits[0].str() : bits[0]; // Note, this should not necessary, but my IDE is not detecting the conditioning in the previous loop

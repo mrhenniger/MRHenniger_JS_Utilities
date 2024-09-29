@@ -164,7 +164,8 @@
             testCompare("Test 9a - isEmpty()", true, subject.isEmpty());
             subject = new Strings('abc123');
             let equal = new Strings('abc123');
-            testCompare("Test 9b - equals() true", true, subject.equals(equal));
+            testCompare("Test 9b1 - equals() true", true, subject.equals(equal));
+            testCompare("Test 9b2 - equals() true", true, subject.equals('abc123'));
             let notEqual = new Strings('definitely not equal');
             testCompare("Test 9c - equals() false", false, subject.equals(notEqual));
             subject = new Strings('<div class="thing">&stuff & thangs&</div></br>');

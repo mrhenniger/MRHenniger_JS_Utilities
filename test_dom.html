@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head class="theHead">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MRHenniger JS Utilities - Test: Strings</title>
+    <link rel="stylesheet" type="text/css" href="basic.css">
+    <script src="strings.js"></script>
+    <script src="dom.js"></script>
+    <script src="domCollection.js"></script>
+    <script src="testUtilities.js"></script>
+    <script>
+        function pageLoaded() {
+
+            testLabel('Constructor');
+            let subject = new Dom(null);
+            let classList = subject.getClassList();
+            testCompare("Test 1a1 - constructor(null)", 1, classList.length);
+            testCompare("Test 1a2 - constructor(null)", 'theBody', classList[0]);
+            subject = new Dom('head');
+            classList = subject.getClassList();
+            testCompare("Test 1b1 - constructor('head')", 1, classList.length);
+            testCompare("Test 1b2 - constructor('head')", 'theHead', classList[0]);
+            subject = new Dom('div');
+            testCompare("Test 1c2 - constructor('div')", 'titleLine', subject.getClassNth(1));
+            let body = new Dom('body');
+            classList = body.getClassList();
+            testCompare("Test 1d1 - constructor('body')", 1, classList.length);
+            testCompare("Test 1d2 - constructor('body')", 'theBody', classList[0])
+            let copy = new Dom(body);
+            classList = copy.getClassList();
+            testCompare("Test 1e1 - constructor('body')", 1, classList.length);
+            testCompare("Test 1e2 - constructor('body')", 'theBody', classList[0]);
+
+            testLabel('innerHTML');
+            let scratch = body.find('.theScratch').first();
+            testCompare("Test 2a - innerHTML", 'initial content', scratch.innerHTML().str());
+            scratch.innerHTMLWipe();
+            testCompare("Test 2b - innerHTML", '', scratch.innerHTML().str());
+            scratch.innerHTML('xxx');
+            testCompare("Test 2c1 - innerHTML", 'xxx', scratch.innerHTML().str());
+            scratch.innerHTMLPrepend('pre').innerHTMLAppend('post');
+            testCompare("Test 2c2 - innerHTML", 'prexxxpost', scratch.innerHTML().str());
+
+            testLabel('find');
+            scratch.innerHTMLWipe().innerHTML(`<div id='testid'>test id</div><div class='testclass'>test class</div><span>test tag</span>`);
+            let first = scratch.find('#testid').first();
+            testCompare("Test 3a1 - find singles", 'test id', scratch.find('#testid').first().innerHTML().str());
+            testCompare("Test 3a2 - find singles", 0, scratch.find('#notfound').getSize());
+            testCompare("Test 3b1 - find singles", 'test class', scratch.find('.testclass').first().innerHTML().str());
+            testCompare("Test 3b2 - find singles", 0, scratch.find('.notfound').getSize());
+            testCompare("Test 3c1 - find singles", 'test tag', scratch.find('span').first().innerHTML().str());
+            testCompare("Test 3c2 - find singles", 0, scratch.find('notfound').getSize());
+            scratch.innerHTMLWipe().innerHTML(`
+                <div id='layer1'>
+                    <div class='id1'>layer 1 class 1</div>
+                    <div class='id2'>layer 1 class 2</div>
+                    <div class='id3'>layer 1 class 3</div>
+                </div>
+                <div class='layer2'>
+                    <div class='class1'>layer 2 class 1</div>
+                    <div class='class2'>layer 2 class 2</div>
+                    <div class='class3'>layer 2 class 3</div>
+                </div>
+                <span id='layers3'>
+                    <div class='tag1'>layer 3 class 1</div>
+                    <div class='tag2'>layer 3 class 2</div>
+                    <div class='tag3'>layer 3 class 3</div>
+                </span>
+            `);
+            testCompare("Test 3d1 - find layers", 'layer 1 class 1', scratch.find('#layer1 .id1').first().innerHTML().str());
+            testCompare("Test 3d2 - find layers", 0, scratch.find('#layer1 notfound').getSize());
+            testCompare("Test 3e1 - find layers", 'layer 2 class 2', scratch.find('.layer2 .class2').first().innerHTML().str());
+            testCompare("Test 3e2 - find layers", 0, scratch.find('.layer2 notfound').getSize());
+            testCompare("Test 3f1 - find layers", 'layer 3 class 3', scratch.find('span .tag3').first().innerHTML().str());
+            testCompare("Test 3f2 - find layers", 0, scratch.find('span notfound').getSize());
+            testCompare("Test 3g - find errors", 0, scratch.find('#layer1 #notfound').getSize());
+            scratch.innerHTMLWipe().innerHTML(`
+                <div class='multiplematch'>instance 1</div>
+                <div class='multiplematch'>instance 2</div>
+                <div class='multiplematch'>instance 3</div>
+            `);
+            testCompare("Test 3h2 - find non-existing", 0, scratch.find('.doesnotexist').getSize());
+            testCompare("Test 3h1 - first", 'instance 1', scratch.find('.multiplematch').first().innerHTML().str());
+            testCompare("Test 3i1 - last", 'instance 3', scratch.find('.multiplematch').last().innerHTML().str());
+            testCompare("Test 3j1 - nth", 'instance 2', scratch.find('.multiplematch').nth(2).innerHTML().str());
+            scratch.innerHTMLWipe().innerHTML(`
+                <div class='layer1'>
+                    <div class='layer2'>
+                        <div class='layer3'>destination</div>
+                    </div>
+                </div>
+            `);
+            testCompare("Test 3k1 - deep find", 1, scratch.find('.layer1').getSize());
+            testCompare("Test 3k2 - deep find", 1, scratch.find('.layer1 .layer2').getSize());
+            testCompare("Test 3k3 - deep find", 1, scratch.find('.layer1 .layer2 .layer3').getSize());
+            testCompare("Test 3k4 - deep find", 'destination', scratch.find('.layer1 .layer2 .layer3').first().innerHTML().str());
+            testCompare("Test 3k5 - deep find", 0, scratch.find('.layer1 .xxx .layer3').getSize());
+
+            testLabel('collections');
+            scratch.innerHTMLWipe().innerHTML(`
+                <div class='multiplematch'>instance 1</div>
+                <div class='multiplematch'>instance 2</div>
+                <div class='multiplematch'>instance 3</div>
+            `);
+            let collection = scratch.find('.multiplematch');
+            testCompare("Test 4a1 - collection", 3, collection.expect(3).getSize());
+            testCompare("Test 4a2 - collection", 'instance 1', collection.first().innerHTML().str());
+            testCompare("Test 4a3 - collection", 'instance 3', collection.last().innerHTML().str());
+            testCompare("Test 4a4 - collection", 'instance 2', collection.nth(2).innerHTML().str());
+            scratch.innerHTMLWipe().innerHTML(`
+                <div class='layer1'>
+                    <div class='layer2'>
+                        <div class='layer3'>destination</div>
+                    </div>
+                </div>
+            `);
+
+            testLabel('element utilities');
+            scratch.innerHTMLWipe();
+            testCompare("Test 5a - element utilities", '', scratch.innerHTML().str());
+            let newEle = Dom.create('div', {class: 'newDiv'}).innerHTML('new div prepend');
+            scratch.prepend(newEle);
+            testCompare("Test 5b - element utilities", 'new div prepend', scratch.find('.newDiv').first().innerHTML().str());
+            scratch.innerHTMLWipe();
+            newEle = Dom.create('div', {class: 'newDiv'}).innerHTML('new div append');
+            scratch.prepend(newEle);
+            testCompare("Test 5c - element utilities", 'new div append', scratch.find('.newDiv').first().innerHTML().str());
+            let foundEle = scratch.find('.newDiv').first();
+            foundEle.att('value', 123);
+            testCompare("Test 5d - element utilities", 123, Number(foundEle.att('value')));
+            scratch.find('.newDiv').first().remove();
+            testCompare("Test 5e - element utilities", '', scratch.innerHTML().str());
+            scratch.innerHTMLWipe();
+            let child1 = Dom.create('div', {class: 'child1'});
+            scratch.prepend(child1);
+            let child2 = Dom.create('div', {class: 'child2'}).innerHTML('child 2');
+            child1.appendChild(child2);
+            testCompare("Test 5f - element utilities", 'child 2', scratch.find('.child2').first().innerHTML().str());
+            scratch.innerHTMLWipe();
+            scratch.innerHTML('<div class="subject"></div>');
+            foundEle = scratch.find('.subject').first();
+            foundEle.val(123);
+            testCompare("Test 5g - element utilities", 123, foundEle.val());
+
+            testLabel('class utilities');
+            scratch.innerHTMLWipe();
+            testCompare("Test 6a - element utilities", '', scratch.innerHTML().str());
+            scratch.innerHTML('<div class="newDiv">new div</div>');
+            foundEle = scratch.find('.newDiv').first();
+            foundEle.addClass('addedClass');
+            testCompare("Test 6b - element utilities", true, foundEle.hasClass('addedClass'));
+            foundEle.removeClass('addedClass');
+            testCompare("Test 6c - element utilities", false, foundEle.hasClass('addedClass'));
+            foundEle.addClass('newClassA').addClass('newClassB');
+            testCompare("Test 6d - element utilities", 'newClassA', foundEle.getClassNth(2).str());
+            foundEle.removeClass('newClassA').removeClass('newClassB');
+            testCompare("Test 6e - element utilities", 1, foundEle.getClassList().length);
+            testCompare("Test 6f - element utilities", true, foundEle.hide().hasClass('hidden'));
+            testCompare("Test 6g - element utilities", false, foundEle.show().hasClass('hidden'));
+
+            testLabel('children');
+            scratch.innerHTML(`
+                <div class='child1'>child 1<div>
+                <div class='child2'>child 2<div>
+                <div class='child3'>child 3<div>
+            `);
+            scratch.children();
+
+
+
+        //testCompare = (testLabel, expected, actual, failureMessage = "FAIL!!!", successMessage = "Pass" )
+        }
+    </script>
+</head>
+<body onload="pageLoaded();" class="theBody">
+<div class="titleLine font20 fontBold fontBlack fontArial">MRHenniger JS Utilities - Test: Strings</div></br>
+</br>
+<div id="output" class="font18 fontNorm fontBlack fontArial"></div>
+<div id="scratchpad" class="theScratch">initial content</div>
+
+
+
+
+
+</body>
+</html>
