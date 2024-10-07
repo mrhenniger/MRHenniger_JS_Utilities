@@ -18,6 +18,8 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V4 - October 7    - Cleaned out some old now unneeded files.
+
 V3 - October 7    - Added the new class Promises to provide extended functionality to the native Promise.  You can use
                     this like a stand Promise or use it as a flagging system where you can resolve and reject the 
                     promise directly.  It also includes a memory feature so the Promise can be linked back to a specific
