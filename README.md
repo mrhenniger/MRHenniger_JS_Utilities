@@ -18,7 +18,12 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
-V2 - September 29 - Added the new classes Dom and DomCollection with aid in the manipulation of the dom.  These 
+V3 - October 7    - Added the new class Promises to provide extended functionality to the native Promise.  You can use
+                    this like a stand Promise or use it as a flagging system where you can resolve and reject the 
+                    promise directly.  It also includes a memory feature so the Promise can be linked back to a specific
+                    item in a collection of items returned from a service.
+
+V2 - September 29 - Added the new classes Dom and DomCollection to aid in the manipulation of the dom.  These 
                     utilities are intended to be a lightweight alternative to the JQuery library.  There isn't too much
                     to them yet, but they have been proven useful in another project.  I expect to develop them both 
                     further.  Look for the tests in test_dom.html for examples of how these utility classes may be used.

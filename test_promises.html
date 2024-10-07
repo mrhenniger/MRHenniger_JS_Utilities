@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MRHenniger JS Utilities - Test: Strings</title>
+    <link rel="stylesheet" type="text/css" href="basic.css">
+    <script src="promises.js"></script>
+    <script src="testUtilities.js"></script>
+    <script>
+        function pageLoaded() {
+            testLabel('Constructor');
+            let subject = new Promises();
+            testCompare("Test 1a - Promises(undefined)", 'pending', subject.getState());
+            testCompare("Test 1b - Promises(undefined)", true, subject.isPending());
+
+            subject = new Promises();
+            subject.setMemory('memory test text');
+            let subject2 = new Promises(subject);
+            testCompare("Test 2 - Promises(Promises)", 'memory test text', subject2.getMemory());
+
+            let resolveIt = null;
+            let originalPromise = new Promise((resolve, reject) => {
+                resolveIt = resolve;
+            });
+            let subject3 = new Promises(originalPromise);
+            testCompare("Test 3a - Promises(Promise)", 'pending', subject3.getState());
+            resolveIt("any old stuff will do");
+            setTimeout(() => {
+                testCompare("Test 3b - Promises(Promise)", 'fulfilled', subject3.getState());
+            }, 1);
+
+            let subject4a = new Promises();
+            let subject4b = new Promises();
+            let subject4 = new Promises([subject4a, subject4b]);
+            testCompare("Test 4a - Promises(Promise[])", 'pending', subject4.getState());
+            setTimeout(() => {
+                subject4a.accept("accepting 1");
+                testCompare("Test 4b - Promises(Promise[])", 'pending', subject4.getState());
+
+                subject4b.accept("accepting 2");
+                setTimeout(() => {
+                    testCompare("Test 4c - Promises(Promise[])", 'fulfilled', subject4.getState());
+                }, 1);
+            }, 1);
+
+            let subject5 = new Promises();
+            testCompare("Test 5 - Promises()", 'pending', subject5.getState());
+            subject5.accept("stuff and thangs");
+            setTimeout(() => {
+                testCompare("Test 5 - Promises()", 'fulfilled', subject5.getState());
+            }, 1);
+
+            let resolveIt6 = null;
+            let original6 = new Promise((resolve, reject) => {
+                resolveIt6 = resolve;
+            });
+            let subject6 = new Promises(original6);
+            let messageAccept6 = '';
+            let messageReject6 = '';
+            subject6.setMemory(
+                'memory store',
+                {
+                    memoryAccept:  ((acceptData) => {messageAccept6 = acceptData;}),
+                    memoryReject: ((rejectData) => {messageReject6 = rejectData;})
+                }
+            );
+            testCompare("Test 6a - memory", 'memory store', subject6.getMemory());
+            subject6.then(() => {}).catch(() => {});
+            resolveIt6("any old stuff will do");
+            setTimeout(() => {
+                testCompare("Test 6b - Promises()", 'memory store', messageAccept6);
+                testCompare("Test 6c - Promises()", '', messageReject6);
+            }, 1);
+
+            let rejectIt7 = null;
+            let original7 = new Promise((resolve, reject) => {
+                rejectIt7 = reject;
+            });
+            let subject7 = new Promises(original7);
+            let messageAccept7 = '';
+            let messageReject7 = '';
+            subject7.setMemory(
+                'memory store',
+                {
+                    memoryAccept: ((acceptData) => {messageAccept7 = acceptData;}),
+                    memoryReject: ((rejectData) => {messageReject7 = rejectData;})
+                }
+            );
+            testCompare("Test 7a - memory", 'memory store', subject7.getMemory());
+            subject7.then(() => {}).catch(() => {});
+            rejectIt7("any old stuff will do");
+            setTimeout(() => {
+                testCompare("Test 7b - Promises()", '', messageAccept7);
+                testCompare("Test 7c - Promises()", 'memory store', messageReject7);
+            }, 1);
+
+            result = new Promises();
+            result.then((data) => {
+                testCompare("Test 8a - Promises(undefined)", 'accept commanded', data);
+            }).catch((err) => {
+                testCompare("Test 8aERR - Promises(undefined)", 'this branch should not be executed', false);
+            });
+            result.accept('accept commanded');
+            testCompare("Test 8b - Promises(undefined)", 'fulfilled', result.getState());
+
+            result = new Promises();
+            result.then((data) => {
+                testCompare("Test 9aERR - Promises(undefined)", 'this branch should not be executed', false);
+            }).catch((err) => {
+                testCompare("Test 9a - Promises(undefined)", 'reject commanded', err);
+            });
+            result.reject('reject commanded');
+            testCompare("Test 9b - Promises(undefined)", 'rejected', result.getState());
+
+            let subject10a = new Promises();
+            let subject10b = new Promises();
+            let subject10 = Promises.allSettled([subject10a, subject10b]);
+            testCompare("Test 10a - allSettled", 'pending', subject10.getState());
+            subject10a.accept("accepting 1");
+            setTimeout(() => {
+                testCompare("Test 10b - allSettled", 'pending', subject10.getState());
+
+                subject10b.accept("accepting 2");
+                setTimeout(() => {
+                    testCompare("Test 10c - allSettled", 'fulfilled', subject10.getState());
+                }, 1);
+            }, 1);
+
+            let subject11a = new Promises();
+            let subject11b = new Promises();
+            let subject11 = Promises.any([subject11a, subject11b]);
+            testCompare("Test 11a - allSettled", 'pending', subject11.getState());
+            subject11a.accept("accepting 1");
+            setTimeout(() => {
+                testCompare("Test 11b - allSettled", 'fulfilled', subject11.getState());
+
+                subject11b.accept("accepting 2");
+                setTimeout(() => {
+                    testCompare("Test 11c - allSettled", 'fulfilled', subject11.getState());
+                }, 1);
+            }, 1);
+
+            let subject12 = new Promises();
+            testCompare("Test 12b - allSettled", 'pending', subject12.getState());
+            subject12.setTimeout(10);
+            setTimeout(() => {
+                testCompare("Test 12b - allSettled", 'rejected', subject12.getState());
+            }, 20);
+        }
+    </script>
+</head>
+<body onload="pageLoaded();">
+<div class="font20 fontBold fontBlack fontArial">MRHenniger JS Utilities - Test: Promises</div></br>
+</br>
+<div id="output" class="font18 fontNorm fontBlack fontArial"></div>
+</body>
+</html>
