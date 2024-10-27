@@ -18,6 +18,8 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V6 - October 27   - Adding a json file which includes a list of files available for use in other projects.
+
 V5 - October 27   - Add the new class Times to provide the basis of date/time manipulation.  There isn't much to this
                     yet, and it should be expected that functionality will be added.
 
