@@ -1,0 +1,13 @@
+{
+  "css": [
+    "basic.css"
+  ],
+  "js": [
+    "dom.js",
+    "domCollection.js",
+    "interfaceNamed.js",
+    "promises.js",
+    "strings.js",
+    "times.js"
+  ]
+}
