@@ -1,8 +1,8 @@
 # MRHenniger_JS_Utilities
  Utilities for HTML/CSS/JS written by Mike R Henniger
 
-This is a collection of utilities written my Mike Henniger to make working with vanilla JS and avoid bloated frame works 
-with frequent updates which make hobby projects difficult to keep current.
+This is a collection of utilities written me, Mike Henniger, to make working with vanilla JS and avoid bloated 
+frameworks with frequent updates which make hobby projects difficult to keep current.
 
 I originally wrote some of these utilities in JavaScript (see some files with _Original in the name), but this seemed a 
 good project with which to build my TypeScript chops. So I am refactoring EVERYTHING.  This is a work in progress.
@@ -17,6 +17,9 @@ https://www.linkedin.com/in/mikehenniger/
 
 
 Revision log...
+
+V5 - October 27   - Add the new class Times to provide the basis of date/time manipulation.  There isn't much to this
+                    yet, and it should be expected that functionality will be added.
 
 V4 - October 7    - Cleaned out some old now unneeded files.
 

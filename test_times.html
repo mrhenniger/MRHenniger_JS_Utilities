@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MRHenniger JS Utilities - Test: Strings</title>
+    <link rel="stylesheet" type="text/css" href="basic.css">
+    <script src="times.js"></script>
+    <script src="strings.js"></script>
+    <script src="testUtilities.js"></script>
+    <script>
+        function pageLoaded() {
+            testLabel('Constructor');
+            let subject = new Times();
+            testCompare("Test 1a - Times(undefined)", 0, subject.getMilliseconds());
+            subject = new Times(1730046749368);
+            testCompare("Test 1b - Times(number/milliseconds)", 1730046749368, subject.getMilliseconds());
+            let dateStr = new Strings('Sun Oct 27 2024')
+            subject = new Times(dateStr);
+            testCompare("Test 1c - Times(string/date string)", 'Sun Oct 27 2024', subject.str());
+            let before = Times.now();
+            let after = new Times(before);
+            testCompare("Test 1d - Times(Times)", before.getMilliseconds(), after.getMilliseconds());
+
+            testLabel('Gets');
+            subject = new Times(123456890);
+            testCompare("Test 2a - getMilliseconds", 123456890, subject.getMilliseconds());
+            testCompare("Test 2b - getSeconds", 123456, subject.getSeconds());
+
+            testLabel('Equals');
+            left = new Times(1234567890);
+            right = new Times(1234567890);
+            testCompare("Test 3a - equals", true, left.equals(right));
+            right = new Times(987654321);
+            testCompare("Test 3b - not equals", false, left.equals(right));
+
+            testLabel('Math');
+            left = new Times(1000);
+            right = new Times(234);
+            testCompare("Test 3a - add", 1234, left.add(right).getMilliseconds());
+            right = new Times(500);
+            testCompare("Test 3a - subtract", 500, left.subtract(right).getMilliseconds());
+            right = new Times(10);
+            testCompare("Test 3a - multiply", 10000, left.multiply(right).getMilliseconds());
+            right = new Times(10);
+            testCompare("Test 3a - divide", 100, left.divide(right).getMilliseconds());
+        }
+    </script>
+</head>
+<body onload="pageLoaded();">
+<div class="font20 fontBold fontBlack fontArial">MRHenniger JS Utilities - Test: Promises</div></br>
+</br>
+<div id="output" class="font18 fontNorm fontBlack fontArial"></div>
+</body>
+</html>
