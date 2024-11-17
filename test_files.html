@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MRHenniger JS Utilities - Test: Strings</title>
+    <link rel="stylesheet" type="text/css" href="basic.css">
+    <script src="files.js"></script>
+    <script src="promises.js"></script>
+    <script src="testUtilities.js"></script>
+    <script>
+        function pageLoaded() {
+            testLabel('file_getContents');
+            let test1Callback = (payload) => {
+                testCompare("Test 1 - file_getContents", 'Hello world!', payload);
+            }
+
+            // These functions can't be tested in this environment...
+            // Files.getContents(URL GOES HERE, true);
+            // Files.getJson(URL GOES HERE, true);
+        }
+    </script>
+</head>
+<body onload="pageLoaded();">
+<div class="font20 fontBold fontBlack fontArial">MRHenniger JS Utilities - Test: Strings</div></br>
+</br>
+<div id="output" class="font18 fontNorm fontBlack fontArial"></div>
+</body>
+</html>

@@ -23,7 +23,7 @@
             testCompare("Test 1b1 - constructor('head')", 1, classList.length);
             testCompare("Test 1b2 - constructor('head')", 'theHead', classList[0]);
             subject = new Dom('div');
-            testCompare("Test 1c2 - constructor('div')", 'titleLine', subject.getClassNth(1));
+            testCompare("Test 1c2 - constructor('div')", 'titleLine', subject.getClassNth(1).str());
             let body = new Dom('body');
             classList = body.getClassList();
             testCompare("Test 1d1 - constructor('body')", 1, classList.length);
@@ -160,17 +160,43 @@
             testCompare("Test 6f - element utilities", true, foundEle.hide().hasClass('hidden'));
             testCompare("Test 6g - element utilities", false, foundEle.show().hasClass('hidden'));
 
-            testLabel('children');
-            scratch.innerHTML(`
-                <div class='child1'>child 1<div>
-                <div class='child2'>child 2<div>
-                <div class='child3'>child 3<div>
-            `);
-            scratch.children();
+            testLabel('styles');
+            scratch.innerHTMLWipe().innerHTML(`<div class='stylesTarget'>styles</div>`);
+            foundEle = scratch.find('.stylesTarget').first();
+            foundEle.height('123px');
+            testCompare("Test 7a1 - sytles height", '123px', foundEle.height().str());
+            foundEle.height('123em');
+            testCompare("Test 7a2 - sytles height", '123em', foundEle.height().str());
+            foundEle.height('123%');
+            testCompare("Test 7a3 - sytles height", '123%', foundEle.height().str());
+            foundEle.height('123');
+            testCompare("Test 7a4 - sytles height", '123px', foundEle.height().str());
+            foundEle.height(123);
+            testCompare("Test 7a4 - sytles height", '123px', foundEle.height().str());
+
+            foundEle.width('123px');
+            testCompare("Test 7b1 - sytles width", '123px', foundEle.width().str());
+            foundEle.width('123em');
+            testCompare("Test 7b2 - sytles width", '123em', foundEle.width().str());
+            foundEle.width('123%');
+            testCompare("Test 7b3 - sytles width", '123%', foundEle.width().str());
+            foundEle.width('123');
+            testCompare("Test 7b4 - sytles width", '123px', foundEle.width().str());
+            foundEle.width(123);
+            testCompare("Test 7b4 - sytles width", '123px', foundEle.width().str());
 
 
 
-        //testCompare = (testLabel, expected, actual, failureMessage = "FAIL!!!", successMessage = "Pass" )
+            testLabel('events');
+            scratch.innerHTMLWipe().innerHTML(`<div class='target'>events testing</div>`);
+            foundEle = scratch.find('.target').first();
+            let eventHandler = () => {
+                testCompare("Test 8a - events - click event triggered", true, true);
+            };
+            foundEle.eventListen('click', eventHandler)
+            foundEle.eventTrigger('click'); // Will see a log
+            foundEle.eventRemove('click', eventHandler);
+            foundEle.eventTrigger('click'); // Will not see a log
         }
     </script>
 </head>

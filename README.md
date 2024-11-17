@@ -18,6 +18,11 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V7 - November 17  - Adding support to Dom to allow for the insertion of SVG files into the dom.  Also added event
+                    handling to the Dom class.  In addition create a new class, Files, which is intended to allow for 
+                    the reading of local files accessible to the app, and files via URL.  THIS NEW CLASS IS STILL 
+                    UNDERDEVELOPMENT AND SHOULD NOT BE TRUSTED!
+
 V6 - October 27   - Adding a json file which includes a list of files available for use in other projects.
 
 V5 - October 27   - Add the new class Times to provide the basis of date/time manipulation.  There isn't much to this

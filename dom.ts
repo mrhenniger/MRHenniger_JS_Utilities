@@ -15,6 +15,7 @@
 class Dom implements Named {
     className: string;
     private __core: any;
+    private __svgCache: object;
     // other member data goes here
 
     /*
@@ -26,6 +27,8 @@ class Dom implements Named {
         this.className = "Dom";
         this.__core = null;
         ref = ref?.name === "Strings" ? ref.str() : ref;
+
+        this.__svgCache = {};
 
         let refType = typeof ref;
         if (ref === null || ref === 'body') {
@@ -647,183 +650,273 @@ class Dom implements Named {
     }
 
     /*
-     * Function:  focus
+     * Function:  __svg
      *
-     * Description:  Sets focus on the Dom element if it can accept focus.
+     * Description:  Support function to add the svg to the dom and add attributes.
      *
-     * @param  none
+     * @param  content  SVG data.
+     * @param  att  Attributes to be applied to the SVG.
+     *
+     * @return  Dom  Returns a Dom representing the new svg element.  In case of failure returns null.
+     */
+    private __svg(content: string|Strings, att={}): Dom|null {
+        content = typeof content === 'string' ? content : content.str();
+
+        // Add the SVG
+        this.innerHTMLAppend(content);
+
+        // Find the SVG that was just added
+        let svg = this.find('svg').last();
+        if (svg === null) {
+            return null;
+        }
+        let svgCore = svg.getCore();
+        if (svgCore === null) {
+            return null;
+        }
+
+        // Then in turn apply the attributes
+        let keys = Object.keys(att);
+        let aKey = null;
+        let anAtt = null;
+        for (let index=0; index<keys.length; index++) {
+            aKey = keys[index];
+            // @ts-ignore - The following line is constructed correctly.
+            anAtt = att[aKey];
+            if (anAtt !== null) {
+                svgCore.setAttribute(aKey, anAtt)
+            }
+        }
+
+        return svg;
+    }
+
+    /*
+     * Function:  svg
+     *
+     * Description:  Support function to add the svg to the dom and add attributes.
+     *
+     * @param  content  SVG data.
+     * @param  att  Attributes to be applied to the SVG.
      *
      * @return  Dom  Returns self to allow for chaining of commands.
      */
-    public focus(): Dom {
-        this.__core.focus();
+    public svg(imageName: string|Strings, att={}) {
+        imageName = typeof imageName === 'string' ? imageName : imageName.str();
+
+        // If the cache does not exist create it
+        this.__svgCache = typeof this.__svgCache === 'undefined' ? {} : this.__svgCache;
+
+        // Case:  It is already in the cache
+        // @ts-ignore - The following line is constructed correctly.
+        if (typeof this.__svgCache[imageName] !== 'undefined') {
+            // Sub-Case:  It is already resolved as a string
+            // @ts-ignore - The following line is constructed correctly.
+            if (typeof this.__svgCache[imageName] === 'string') {
+                // @ts-ignore - The following line is constructed correctly.
+                this.__svg(this.__svgCache[imageName], att);
+            }
+
+            // Sub-Case:  It has yet to be resolved
+            else {
+                // @ts-ignore - The following line is constructed correctly.
+                this.__svgCache[imageName].then(() => {
+                    // By the time we execute in here the cached promise has been replaced by a string
+                    // @ts-ignore - The following line is constructed correctly.
+                    this.__svg(this.__svgCache[imageName], att);
+                });
+            }
+        }
+
+        // Case:  It is new to the cache
+        else {
+            // @ts-ignore - The following line is constructed correctly.
+            this.__svgCache[imageName] = new Promises();
+
+            if (typeof Services === 'undefined') {
+                window.console.error('Services not available');
+                // @ts-ignore - The following line is constructed correctly.
+                this.__svgCache[imageName].reject('Dom::svg - Services not available');
+                // @ts-ignore - The following line is constructed correctly.
+                delete this.__svgCache[imageName];
+            } else {
+                let startup = Services.get('startup');
+                let imagePath = startup.relativeBase + 'images/' + imageName + '.svg';
+                let svgPromise = Files.getContents(imagePath);
+                svgPromise.then((contents: any) => {
+                    // @ts-ignore - The following line is constructed correctly.
+                    this.__svgCache[imageName].accept(`svg (${imageName}) placed`);
+                    // @ts-ignore - The following line is constructed correctly.
+                    this.__svgCache[imageName] = contents;
+                    this.__svg(contents, att);
+                }).catch(() => {
+                    // @ts-ignore - The following line is constructed correctly.
+                    this.__svgCache[imageName].reject(`svg (${imageName}) failed`);
+                    // @ts-ignore - The following line is constructed correctly.
+                    delete this.__svgCache[imageName];
+                });
+            }
+        }
+
         return this;
     }
 
     /*
-     * Function:  unfocus
+     * Function:  addAnnimationEnd
      *
-     * Description:  Removes the focus from the Dom element.
+     * Description:  Detect the completion of an animation.
      *
-     * @param  none
+     * @param  callback  Function to call when detected.
      *
      * @return  Dom  Returns self to allow for chaining of commands.
      */
-    public unfocus(): Dom {
-        this.__core.blur();
+    public addAnnimationEnd(callback: any) {
+        this.__core.addEventListener("webkitAnimationEnd", callback);
+        this.__core.addEventListener("animationend", callback);
         return this;
     }
 
     /*
-     * Function:  hasFocus
+     * Function:  removeAnnimationEnd
      *
-     * Description:  Evaluates the element and determines if it is current the element with the focus.
+     * Description:  Remove detection of the completion of an animation.
      *
-     * @param  none
+     * @param  callback  Function that was called when detected.
      *
      * @return  Dom  Returns self to allow for chaining of commands.
      */
-    public hasFocus(): Dom {
-        this.__core.blur();
+    public removeAnnimationEnd(callback: any) {
+        this.__core.removeEventListener("webkitAnimationEnd", callback);
+        this.__core.removeEventListener("animationend", callback);
         return this;
     }
+
+    /*
+     * Function:  eventListen
+     *
+     * Description:  Add an event listener to the element.
+     *
+     * @param  event  The event type to be detected.
+     * @param  callback  Function to call when the event is detected.
+     *
+     * @return  Dom  Returns self to allow for chaining of commands.
+     */
+    public eventListen(event: string|Strings, func: any) {
+        event = typeof event === 'string' ? event : event.str();
+
+        this.__core.addEventListener(event, func);
+        return this;
+    }
+
+    /*
+     * Function:  eventRemove
+     *
+     * Description:  Remove an event listener from the element.
+     *
+     * @param  event  The event type to be ignored.
+     * @param  callback  Function that was added with the event listener.
+     *
+     * @return  Dom  Returns self to allow for chaining of commands.
+     */
+    public eventRemove(event: string|Strings, func: any) {
+        event = typeof event === 'string' ? event : event.str();
+
+        this.__core.removeEventListener(event, func);
+        return this;
+    }
+
+    /*
+     * Function:  eventTrigger
+     *
+     * Description:  Programmatically trigger an event.
+     *
+     * @param  event  The event type to be triggered.
+     *
+     * @return  Dom  Returns self to allow for chaining of commands.
+     */
+    public eventTrigger(event: string|Strings) {
+        event = typeof event === 'string' ? event : event.str();
+
+        this.__core.dispatchEvent(new CustomEvent(event));
+        return this;
+    }
+
+    /*
+     * Function:  height
+     *
+     * Description:  Set the height in styles.
+     *
+     * @param  newVal  When empty the height is returned and when defined the height is set.
+     *
+     * @return  Dom|string  Returns a Strings containing the height when newVal is empty, otherwise returns self (Dom).
+     */
+    public height(newVal: null|number|string|Strings = null): Strings|Dom {
+        // Check for getting value
+        if (newVal === null) {
+            let ret = this.__core.style.height;
+            if (typeof ret === 'string') {
+                return new Strings(ret);
+            }
+
+            return new Strings(this.__core.clientHeight);
+        }
+
+        // Set prep
+        newVal = new Strings(newVal);
+        if (!(newVal.ends('px') || newVal.ends('em') || newVal.ends('%'))) {
+            newVal.append('px'); // If no type assume pixels
+        }
+
+        // Set the value
+        this.__core.style.height = newVal.str();
+
+        // Returned modified element
+        return this;
+    }
+
+    /*
+     * Function:  width
+     *
+     * Description:  Set the width in styles.
+     *
+     * @param  newVal  When empty the width is returned and when defined the width is set.
+     *
+     * @return  Dom|string  Returns a Strings containing the width when newVal is empty, otherwise returns self (Dom).
+     */
+    public width(newVal: null|number|string|Strings = null): Strings|Dom {
+        // Check for getting value
+        if (newVal === null) {
+            let ret = this.__core.style.width;
+            if (typeof ret === 'string') {
+                return new Strings(ret);
+            }
+
+            return new Strings(this.__core.clientWidth);
+        }
+
+        // Set prep
+        newVal = new Strings(newVal);
+        if (!(newVal.ends('px') || newVal.ends('em') || newVal.ends('%'))) {
+            newVal.append('px'); // If no type assume pixels
+        }
+
+        // Set the value
+        this.__core.style.width = newVal.str();
+
+        // Returned modified element
+        return this;
+    }
+
+
 }
+
 
 /* The following are rough drafts of future features
-
-function __svg(content, att={}) {
-    // Add the SVG
-    innerHTMLAppend(content);
-
-    // Find the SVG that was just added
-    let svg = last('svg');
-    let svgCore = svg.getCore();
-
-    // Then in turn apply the attributes
-    let keys = Object.keys(att);
-    let aKey = null;
-    for (let index=0; index<keys.length; index++) {
-        aKey = keys[index];
-        svgCore.setAttribute(aKey, att[aKey])
-    }
-}
-function svg(imageName, att={}) {
-    __svgCache = typeof __svgCache === 'undefined' ? {} : __svgCache;
-
-    if (typeof __svgCache[imageName] !== 'undefined') {
-        if (typeof __svgCache[imageName] === 'string') {
-            __svg(__svgCache[imageName], att);
-        } else {
-            __svgCache[imageName].then(() => {
-                __svg(__svgCache[imageName], att);
-            })
-        }
-    } else {
-        __svgCache[imageName] = new Promise ((resolve,reject) => {
-            let imagePath = startup.relativeBase + 'images/' + imageName + '.svg';
-            file_getContents(imagePath, function (contents) {
-                __svgCache[imageName] = contents;
-                __svg(__svgCache[imageName], att);
-                resolve();
-            }.bind(imageName));
-        })
-    }
-
-    return Dom(__core);
-}
-
-function addAnnimationEnd(callback) {
-    __core.addEventListener("webkitAnimationEnd", callback);
-    __core.addEventListener("animationend", callback);
-    return Dom(__core);
-}
-
-function removeAnnimationEnd(callback) {
-    __core.removeEventListener("webkitAnimationEnd", callback);
-    __core.removeEventListener("animationend", callback);
-    return Dom(__core);
-}
-
-function addEvtLstnr(event, func) {
-    __core.addEventListener(event, func);
-    return Dom(__core);
-}
-
-function rmEvtLstnr(event, func) {
-    __core.removeEventListener(event, func);
-    return Dom(__core);
-}
-
-
-
-function height(newVal) {
-    // Check for getting value
-    if (typeof newVal === 'undefined') {
-        let ret = __core.style.height;
-        let retType = typeof ret;
-        if (retType === 'string' && ret.endsWith('px')) {
-            ret = ret.substr(0,ret.length - 2);
-            ret = parseInt(ret);
-            return ret;
-        }
-
-        ret = __core.clientHeight;
-        retType = typeof ret;
-        if (retType === 'number') {
-            return ret;
-        }
-
-        return null;
-    }
-
-    // Check for setting value
-    if (typeof newVal !== 'number') {
-        window.console.log('Dom::height - Parameter newValue is not a number');
-        return null;
-    }
-    __core.style.height = newVal;
-
-    // Returned modified element
-    return Dom(__core);
-}
-
-function width(newVal) {
-    // Check for getting value
-    if (typeof newVal === 'undefined') {
-        let ret = __core.style.width;
-        let retType = typeof ret;
-        if (retType === 'string' && ret.endsWith('px')) {
-            ret = ret.substr(0,ret.length - 2);
-            ret = parseInt(ret);
-            return ret;
-        }
-
-        ret = __core.clientWidth;
-        retType = typeof ret;
-        if (retType === 'number') {
-            return ret;
-        }
-
-        return null;
-    }
-
-    // Check for setting value
-    if (typeof newVal !== 'number') {
-        window.console.log('Dom::height - Parameter newValue is not a number');
-        return null;
-    }
-    __core.style.width = newVal;
-
-    // Returned modified element
-    return Dom(__core);
-}
-
             function reactAdd(refClass) {
                 const root = ReactDOM.createRoot(__core);
                 const e = React.createElement;
                 root.render(e(refClass));
             }
-
 
 // The following were never implemented
 function pic(imageName, att={}) {

@@ -5,6 +5,7 @@
   "js": [
     "dom.js",
     "domCollection.js",
+    "files.js",
     "interfaceNamed.js",
     "promises.js",
     "strings.js",
