@@ -18,6 +18,11 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V8 - February 2  - Adding initial support for reactive components.  This is only a first draft and will take much more
+                   development.
+
+2025:  Happy new year!!!!!!!
+
 V7 - November 17  - Adding support to Dom to allow for the insertion of SVG files into the dom.  Also added event
                     handling to the Dom class.  In addition create a new class, Files, which is intended to allow for 
                     the reading of local files accessible to the app, and files via URL.  THIS NEW CLASS IS STILL 

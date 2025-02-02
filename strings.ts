@@ -78,6 +78,19 @@ class Strings implements Named {
     }
 
     /*
+     * Function:  duplicate
+     *
+     * Description:  Creates a copy.
+     *
+     * @param  rightSide  The string used for the equivalency.  This would be the right side value with == or === operators.
+     *
+     * @return  Strings  A copy of this.
+     */
+    public duplicate(): Strings {
+        return new Strings(this.__core);
+    }
+
+    /*
      * Function:  equals
      *
      * Description:  Checks the parameter for equivalency against the wrapped string.
@@ -435,7 +448,43 @@ class Strings implements Named {
     }
 
     /*
-     * Function:  implode
+     * Function:  replace
+     *
+     * Description:  Replace all instances of a substring in a string.
+     *
+     * @param  glue  The string to be placed between each of the array string elements.
+     *
+     * @return  Strings  The resulting modified string.
+     */
+    public replace(needle: string|Strings, replacement: string|Strings): Strings {
+        needle = typeof needle === 'string' ? needle : needle.str();
+        replacement = typeof replacement === 'string' ? replacement : replacement.str();
+
+        // Check:  Can't possibly find by length
+        if (needle.length > this.__core.length) {
+            return this;
+        }
+
+        // Check:  Neither the haystack nor the needle have any length
+        if (needle.length === 0 || this.__core.length === 0) {
+            return this;
+        }
+
+        // Check:  There isn't even one instance of the needle in the haystack
+        if (this.__core.indexOf(needle) === -1) {
+            return this;
+        }
+
+        // Do the replacements
+        let bits = this.__core.split(needle);
+        this.__core = bits.join(replacement);
+
+        // Done!
+        return this;
+    }
+
+    /*
+     * Function:  stripHtml
      *
      * Description:  Remove html code from the contained string.
      *

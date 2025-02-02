@@ -120,6 +120,18 @@
             subject = new Strings('initial condition');
             subject.implode('x', [new Strings('a'), new Strings('b'), new Strings('c')]);
             testCompare("Test 3af - implode()", 'axbxc', subject.str());
+            subject = new Strings('abcdefghi');
+            testCompare("Test 3ag1 - replace() - found at start", 'XXXdefghi', subject.replace('abc', 'XXX').str());
+            subject = new Strings('abcdefghi');
+            testCompare("Test 3ag2 - replace() - found in middle", 'abcXXXghi', subject.replace('def', 'XXX').str());
+            subject = new Strings('abcdefghi');
+            testCompare("Test 3ag3 - replace() - found at end", 'abcdefXXX', subject.replace('ghi', 'XXX').str());
+            subject = new Strings('');
+            testCompare("Test 3ag4 - replace() - haystack empty", '', subject.replace('abc', 'XXX').str());
+            subject = new Strings('abcdefghi');
+            testCompare("Test 3ag5 - replace() - needle is empty", 'abcdefghi', subject.replace('', 'xxx').str());
+            subject = new Strings('abcdefghi');
+            testCompare("Test 3ag6 - replace() - needle not found", 'abcdefghi', subject.replace('yyy', 'XXX').str());
 
             testLabel('Conversion/Condition Functions');
             subject = new Strings('<div class="thing">stuff</div></br>');

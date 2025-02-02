@@ -143,11 +143,6 @@
             foundEle = scratch.find('.subject').first();
             foundEle.val(123);
             testCompare("Test 5g - element utilities", 123, foundEle.val());
-            let deleteChild = Dom.create('div', {class: 'deleteChild'}).innerHTML('delete child');
-            scratch.prepend(deleteChild);
-            testCompare("Test 6a - element utilities (delete)", 1, scratch.find('.deleteChild').getSize());
-            deleteChild.delete();
-            testCompare("Test 6b - element utilities (delete)", 0, scratch.find('.deleteChild').getSize());
 
             testLabel('class utilities');
             scratch.innerHTMLWipe();

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head class="theHead">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MRHenniger JS Utilities - Test: Strings</title>
+    <link rel="stylesheet" type="text/css" href="basic.css">
+    <script src="strings.js"></script>
+    <script src="dom.js"></script>
+    <script src="domCollection.js"></script>
+    <script src="files.js"></script>
+    <script src="promises.js"></script>
+    <script src="components.js"></script>
+    <script src="ComponentsTest.js"></script>
+    <script src="testUtilities.js"></script>
+    <script>
+        function pageLoaded() {
+            testLabel('Component Creation');
+            let body = new Dom('body');
+            let parent = body.find('.theScratch').first();
+
+            let subject = new ComponentsTest(parent);
+        }
+    </script>
+</head>
+<body onload="pageLoaded();" class="theBody">
+<div class="titleLine font20 fontBold fontBlack fontArial">MRHenniger JS Utilities - Test: Components</div></br>
+</br>
+<div id="output" class="font18 fontNorm fontBlack fontArial"></div>
+<div id="scratchpad" class="theScratch">initial content</div>
+
+
+
+
+
+</body>
+</html>

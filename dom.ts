@@ -57,6 +57,27 @@ class Dom implements Named {
     }
 
     /*
+     * Function:  delete
+     *
+     * Description:  Removes the element from the dom.
+     *
+     * @param  none
+     *
+     * @return  boolean  Returns true for successfully removed and false if otherwise (example not in the dom).
+     */
+    public delete(): boolean {
+        if (!this.__core) {
+            return false;
+        }
+
+        this.__core.remove();
+        delete this.__core;
+        this.__core = null;
+
+        return true;
+    }
+
+    /*
      * Function:  getCore
      *
      * Description:  An accessor for the wrapped array of Dom elements.
@@ -589,6 +610,32 @@ class Dom implements Named {
     }
 
     /*
+     * Function:  toggleClass
+     *
+     * Description:  Add a class if it is not already there, and if it is where then remove it.
+     *
+     * @param  refClass  The class name for which we are toggling.
+     *
+     * @return  Dom  Returns self to allow for chaining of commands.
+     */
+    public toggleClass(refClass: string|Strings): Dom {
+        refClass = typeof refClass === 'string' ? new Strings(refClass) : refClass;
+        refClass = refClass.trim().str();
+
+        if (refClass === '') {
+            window.console.error("Dom::toggleClass - refClass parameter empty");
+        }
+
+        if (this.hasClass(refClass)) {
+            this.removeClass(refClass);
+            return this;
+        }
+
+        this.addClass(refClass);
+        return this;
+    }
+
+    /*
      * Function:  getClassList
      *
      * Description:  Returns the HTMLElement class list.
@@ -733,6 +780,7 @@ class Dom implements Named {
             // @ts-ignore - The following line is constructed correctly.
             this.__svgCache[imageName] = new Promises();
 
+            // @ts-ignore - Services is a global variable
             if (typeof Services === 'undefined') {
                 window.console.error('Services not available');
                 // @ts-ignore - The following line is constructed correctly.
@@ -740,6 +788,7 @@ class Dom implements Named {
                 // @ts-ignore - The following line is constructed correctly.
                 delete this.__svgCache[imageName];
             } else {
+                // @ts-ignore - Services is a global variable
                 let startup = Services.get('startup');
                 let imagePath = startup.relativeBase + 'images/' + imageName + '.svg';
                 let svgPromise = Files.getContents(imagePath);
