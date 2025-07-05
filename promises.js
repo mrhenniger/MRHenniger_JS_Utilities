@@ -166,7 +166,7 @@ class Promises {
      */
     setMemory(dataToStore, params = {}) {
         let dataToStoreType = typeof dataToStore;
-        if (!(dataToStoreType === 'string' || dataToStoreType === 'number')) {
+        if (!(dataToStoreType === 'string' || dataToStoreType === 'number' || dataToStoreType === 'object')) {
             // @ts-ignore - If here then we know dataToStore is a Strings.
             dataToStore = dataToStore.str();
         }

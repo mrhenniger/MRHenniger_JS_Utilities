@@ -35,6 +35,28 @@ class Components {
             window.console.error(errorMessage);
         }
     }
+    parseSubjectAndAction(event) {
+        event = typeof event === 'string' ? new Strings(event) : event;
+        // Get the action
+        let bits = event.explode('_');
+        const action = bits[0];
+        // Start with the base subject
+        let subject = this.__core;
+        // Determine if there is a signature to follow to lead to the actual subject
+        const size = bits.length;
+        if (size > 1) {
+            let signature = new Strings('');
+            for (let index = 1; index < size; index++) {
+                signature = signature.append(bits[index].prepend(' .'));
+            }
+            signature = signature.trim();
+            // Follow the signature to find the actual subject
+            if (!signature.isEmpty()) {
+                subject = this.__core.find(signature).first();
+            }
+        }
+        return { subject: subject, action: action };
+    }
     /*
      * Function:  addListeners
      *
@@ -49,8 +71,9 @@ class Components {
             return false;
         }
         Object.keys(this.__handlers).forEach(event => {
+            const target = this.parseSubjectAndAction(event);
             // @ts-ignore - The following line is constructed correctly
-            this.__core.eventListen(event, this.__handlers[event]);
+            target.subject.eventListen(target.action, this.__handlers[event]);
         });
         return true;
     }
@@ -68,8 +91,9 @@ class Components {
             return false;
         }
         Object.keys(this.__handlers).forEach(event => {
+            const target = this.parseSubjectAndAction(event);
             // @ts-ignore - The following line is constructed correctly
-            this.__core.eventRemove(event, this.__handlers[event]);
+            target.subject.eventRemove(target.action, this.__handlers[event]);
         });
         return true;
     }
@@ -98,7 +122,8 @@ class Components {
         if (this.__core) {
             this.__reapplyData(newData);
             // @ts-ignore - Checked for null on this.__parent above
-            this.__parent.innerHTMLWipe().append(this.__core);
+            //this.__parent.innerHTMLWipe().append(this.__core); I DON'T THINK IT WILL WORK TO WIPE THE PARENT
+            this.__parent.append(this.__core);
             // Setup listeners
             this.__handlers = newHandlers;
             this.addListeners();
@@ -139,6 +164,28 @@ class Components {
         return true;
     }
     /*
+     * Function:  reviseData
+     *
+     * Description:  Allows an individual element, or a set of data elements, to be revised.
+     *
+     * @param  newData The data elements to be revised.
+     *
+     * @return  boolean  Returns true at least one item was revised, false otherwise.
+     */
+    reviseData(newData) {
+        let copy = this.__data;
+        let newKeys = Object.keys(newData);
+        if (newKeys.length === 0) {
+            return false;
+        }
+        newKeys.forEach(key => {
+            // @ts-ignore - The following line is constructed correctly
+            copy[key] = newData[key];
+        });
+        this.__reapplyData(copy);
+        return true;
+    }
+    /*
      * Function:  delete
      *
      * Description:  Remove the component from the dom.
@@ -159,5 +206,18 @@ class Components {
         // @ts-ignore - The following line is constructed correctly
         this.__core.delete();
         return status;
+    }
+    /*
+     * Function:  destroy
+     *
+     * Description:  Alias for delete.
+     *
+     * @param  none
+     *
+     * @return  boolean  Returns false if the component is not in the dom and returns true if the component was
+     *                   successfully removed.
+     */
+    destroy() {
+        return this.delete();
     }
 }

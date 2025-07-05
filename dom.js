@@ -725,7 +725,7 @@ class Dom {
         return this;
     }
     /*
-     * Function:  addAnnimationEnd
+     * Function:  addAnimationEnd
      *
      * Description:  Detect the completion of an animation.
      *
@@ -733,13 +733,13 @@ class Dom {
      *
      * @return  Dom  Returns self to allow for chaining of commands.
      */
-    addAnnimationEnd(callback) {
+    addAnimationEnd(callback) {
         this.__core.addEventListener("webkitAnimationEnd", callback);
         this.__core.addEventListener("animationend", callback);
         return this;
     }
     /*
-     * Function:  removeAnnimationEnd
+     * Function:  removeAnimationEnd
      *
      * Description:  Remove detection of the completion of an animation.
      *
@@ -747,7 +747,7 @@ class Dom {
      *
      * @return  Dom  Returns self to allow for chaining of commands.
      */
-    removeAnnimationEnd(callback) {
+    removeAnimationEnd(callback) {
         this.__core.removeEventListener("webkitAnimationEnd", callback);
         this.__core.removeEventListener("animationend", callback);
         return this;
@@ -850,6 +850,56 @@ class Dom {
         // Set the value
         this.__core.style.width = newVal.str();
         // Returned modified element
+        return this;
+    }
+    /*
+     * Function:  css
+     *
+     * Description:  Gets or sets the style attributes.
+     *
+     * @param  att  The designation for the style to be retrieved or revised.
+     * @param  val  The value to be set.  Do not specify if you wish to do a get.
+     *
+     * @return  Dom|string  Returns a Strings containing the value of the attribute when doing a retrieve, otherwise
+     *          returns self (Dom).
+     */
+    css(att, val = null) {
+        att = typeof att === 'string' ? att : att.str();
+        if (val === null) {
+            return this.__core.style[att];
+        }
+        val = typeof val === 'number' ? String(val) : val;
+        val = typeof val === 'string' ? val : val.str();
+        this.__core.style[att] = val;
+        return this;
+    }
+    /*
+     * Function:  focus
+     *
+     * Description:  This is a direct mapping to HTMLElement: focus().
+     *
+     * @param  options  Allows the user to specify preventScroll and/or focusVisible.
+     *
+     * @return  Returns self (Dom).
+     */
+    focus(options) {
+        if (options === null) {
+            this.__core.focus();
+        }
+        else {
+            this.__core.focus(options);
+        }
+        return this;
+    }
+    /*
+     * Function:  unfocus
+     *
+     * Description:  This is a direct mapping to HTMLElement: blur().
+     *
+     * @return  Returns self (Dom).
+     */
+    unfocus() {
+        this.__core.blur();
         return this;
     }
 }

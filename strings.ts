@@ -733,4 +733,15 @@ class Strings implements Named {
         }
         return this;
     }
+
+    /*
+     * Function:  length
+     *
+     * Description:  Return the length of the string
+     *
+     * @return  number  The length of the string
+     */
+    public length() {
+        return this.__core.length;
+    }
 }

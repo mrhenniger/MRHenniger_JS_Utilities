@@ -203,6 +203,10 @@
             subject = new Strings('original');
             testCompare("Test 9h1 - random()", 10, subject.random().str().length);
             testCompare("Test 9h2 - random()", 15, subject.random(15).str().length);
+            subject = new Strings('abc');
+            testCompare("Test 9i1 - length", 3, subject.length());
+            subject = new Strings('1234');
+            testCompare("Test 9i2 - length", 4, subject.length());
         }
     </script>
 </head>

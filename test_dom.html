@@ -195,7 +195,13 @@
             foundEle.width(123);
             testCompare("Test 7b4 - sytles width", '123px', foundEle.width().str());
 
-
+            scratch.innerHTMLWipe();
+            scratch.innerHTML('<div class="subject">testing css</div>');
+            subject = scratch.find('.subject').first();
+            subject.css('color', 'blue');
+            testCompare("Test 7c1 - css", 'blue', subject.css('color'));
+            subject.css('color', 'red');
+            testCompare("Test 7c2 - css", 'red', subject.css('color'));
 
             testLabel('events');
             scratch.innerHTMLWipe().innerHTML(`<div class='target'>events testing</div>`);
@@ -207,6 +213,31 @@
             foundEle.eventTrigger('click'); // Will see a log
             foundEle.eventRemove('click', eventHandler);
             foundEle.eventTrigger('click'); // Will not see a log
+
+            testLabel('focus');
+            scratch.innerHTMLWipe();
+            scratch.innerHTML('<div class="subject">focus tests</div>');
+            subject = scratch.find('.subject').first();
+            //testCompare("Test 9a - focus", false, subject.hasfocus());
+            subject.focus();
+            //testCompare("Test 9b - focus", true, subject.hasfocus());
+            subject.unfocus();
+            //testCompare("Test 9b - focus", false, subject.hasfocus());
+            // Note:  There is no way to determine if a specific element has focus
+            //        therefore these tests can not be implemented.
+            scratch.innerHTMLWipe();
+
+            testLabel('focus');
+
+
+
+
+
+
+
+
+
+
         }
     </script>
 </head>

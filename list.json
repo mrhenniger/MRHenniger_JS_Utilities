@@ -9,6 +9,7 @@
     "interfaceNamed.js",
     "promises.js",
     "strings.js",
-    "times.js"
+    "times.js",
+    "components.js"
   ]
 }

@@ -18,7 +18,7 @@ class Promises implements Named {
     private __state: string;
     protected __acceptIt: any;
     protected __rejectIt: any;
-    private __memory: Strings|string|number|null;
+    private __memory: Strings|string|number|object|null;
     private __memoryAccept: any;
     private __memoryReject: any;
     // other member data goes here
@@ -191,9 +191,9 @@ class Promises implements Named {
      *
      * @return  Promises  Returns self to allow for chaining of commands.
      */
-    public setMemory(dataToStore: Strings|string|number, params: object = {}): Promises {
+    public setMemory(dataToStore: Strings|string|number|object, params: object = {}): Promises {
         let dataToStoreType = typeof dataToStore;
-        if (!(dataToStoreType === 'string' || dataToStoreType === 'number')) {
+        if (!(dataToStoreType === 'string' || dataToStoreType === 'number'|| dataToStoreType === 'object')) {
             // @ts-ignore - If here then we know dataToStore is a Strings.
             dataToStore = dataToStore.str();
         }
@@ -223,7 +223,7 @@ class Promises implements Named {
      *
      * @return  string  The state represented as a string.  The valid values are 'pending', 'fulfilled' and 'rejected'.
      */
-    public getMemory(): Strings|string|number|null {
+    public getMemory(): Strings|string|number|object|null {
         return this.__memory;
     }
 
