@@ -188,7 +188,7 @@ class Dom {
         }
         // Search
         let elements = null;
-        let classCount = eleID.count('.');
+        let classCount = searchEleId.count('.');
         if (classCount > 1) {
             elements = this.__getMultiples(searchEleId);
         }

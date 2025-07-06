@@ -97,6 +97,16 @@
             testCompare("Test 3k3 - deep find", 1, scratch.find('.layer1 .layer2 .layer3').getSize());
             testCompare("Test 3k4 - deep find", 'destination', scratch.find('.layer1 .layer2 .layer3').first().innerHTML().str());
             testCompare("Test 3k5 - deep find", 0, scratch.find('.layer1 .xxx .layer3').getSize());
+            scratch.innerHTMLWipe().innerHTML(`
+                <thing>
+                    <div class='layer1'>
+                        <div class='layer2'>destination</div>
+                    </div>
+                </thing>
+            `);
+            testCompare("Test 3l1 - deep find with component", 1, scratch.find('thing').getSize());
+            testCompare("Test 3l2 - deep find with component", 1, scratch.find('thing .layer1').getSize());
+            testCompare("Test 3l3 - deep find with component", 1, scratch.find('thing .layer1 .layer2').getSize());
 
             testLabel('collections');
             scratch.innerHTMLWipe().innerHTML(`

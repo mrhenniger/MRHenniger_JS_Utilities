@@ -23,6 +23,8 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V10 - July 5     - Bug fix in Dom::find now able to find tag elements.
+
 V9 - July 4      - Added a new function "svg" to the dom utility, but this is only a prototype and is not ready for 
                    general use as it is coded for only a specific project for now.
 
