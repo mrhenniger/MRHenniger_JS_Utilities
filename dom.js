@@ -367,6 +367,63 @@ class Dom {
         return ret;
     }
     /*
+     * Function:  componentRegisterInit
+     *
+     * Description:  Utility function to ensure the components register is initialized.
+     *
+     * @return  void
+     */
+    static componentRegisterInit() {
+        if (typeof Dom.__components === 'undefined') {
+            Dom.__components = {};
+        }
+    }
+    /*
+     * Function:  componentRegister
+     *
+     * Description:  A support function to register valid component names.
+     *
+     * @param  comps  The array of valid components
+     *
+     * @return  void
+     */
+    static componentRegister(comps) {
+        Dom.componentRegisterInit();
+        comps.forEach((comp) => {
+            comp = typeof comp === 'string' ? comp : comp.str();
+            // @ts-ignore - The following line is constructed correctly.
+            Dom.__components[comp] = true;
+        });
+    }
+    /*
+     * Function:  componentValid
+     *
+     * Description:  A support function validate a component nane.
+     *
+     * @param  comp  The name of the component.
+     *
+     * @return  boolean  Return true if the component name is valid, false otherwise.
+     */
+    static componentValid(comp) {
+        Dom.componentRegisterInit();
+        comp = typeof comp === 'string' ? comp : comp.str();
+        // @ts-ignore - The following line is constructed correctly.
+        return typeof Dom.__components[comp] !== 'undefined';
+    }
+    /*
+     * Function:  componentFactory
+     *
+     * Description:  A support function to look for a match when a query spec element is a request for a tag type.
+     *
+     * @param  eleID  The requested tag type specified in the string.
+     *
+     * @return  null|HTMLElement[]  A null for an error, otherwise returns the requested component instance.
+     */
+    static componentFactory(comp, theParent, params = {}) {
+        window.console.error("Dom::componentFactory - This function must be overridden in the project class");
+        return null;
+    }
+    /*
      * Function:  create
      *
      * Description:  A utility function to create a new Dom element that is, initially, not attached to the dom.  This
@@ -422,6 +479,39 @@ class Dom {
         }
         this.__core.setAttribute(attName, attVal);
         return this;
+    }
+    /*
+     * Function:  atts
+     *
+     * Description:  A function used for getting the attributes on a Dom element.
+     *
+     * @return  object  Returns an object containing the attribute values.
+     */
+    atts() {
+        var _a;
+        let keys = [];
+        let dict = { keys: null };
+        let size = (_a = this.__core.attributes.length) !== null && _a !== void 0 ? _a : 0;
+        for (let index = 0; index < size; index++) {
+            let key = this.__core.attributes[index].localName;
+            let val = new Strings(this.__core.attributes[key].nodeValue);
+            if (val.isNumeric()) {
+                // @ts-ignore - The following line is constructed correctly.
+                dict[key] = val.number();
+            }
+            else if (val.isJSON()) {
+                // @ts-ignore - The following line is constructed correctly.
+                dict[key] = val.jsonParse();
+            }
+            else {
+                // @ts-ignore - The following line is constructed correctly.
+                dict[key] = val; //.str();
+            }
+            keys.push(key);
+        }
+        // @ts-ignore - The following line is constructed correctly.
+        dict.keys = keys;
+        return dict;
     }
     /*
      * Function:  prepend

@@ -73,7 +73,6 @@ class Components implements Named {
         return { subject: subject, action: action};
     }
 
-
     /*
      * Function:  addListeners
      *

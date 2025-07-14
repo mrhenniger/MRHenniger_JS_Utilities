@@ -16,6 +16,7 @@ class Dom implements Named {
     className: string;
     private __core: any;
     private __svgCache: object;
+    static __components: object;
     // other member data goes here
 
     /*
@@ -407,6 +408,75 @@ class Dom implements Named {
         return ret;
     }
 
+    /*
+     * Function:  componentRegisterInit
+     *
+     * Description:  Utility function to ensure the components register is initialized.
+     *
+     * @return  void
+     */
+    private static componentRegisterInit(): void {
+        if (typeof Dom.__components === 'undefined') {
+            Dom.__components = {};
+        }
+    }
+
+    /*
+     * Function:  componentRegister
+     *
+     * Description:  A support function to register valid component names.
+     *
+     * @param  comps  The array of valid components
+     *
+     * @return  void
+     */
+    static componentRegister(comps: string[]|Strings[]): void {
+        Dom.componentRegisterInit();
+        comps.forEach((comp)=>{
+            comp = typeof comp === 'string' ? comp : comp.str();
+            // @ts-ignore - The following line is constructed correctly.
+            Dom.__components[comp] = true;
+        })
+    }
+
+    /*
+     * Function:  componentValid
+     *
+     * Description:  A support function validate a component nane.
+     *
+     * @param  comp  The name of the component.
+     *
+     * @return  boolean  Return true if the component name is valid, false otherwise.
+     */
+    static componentValid(comp: string|Strings): boolean {
+        Dom.componentRegisterInit();
+        comp = typeof comp === 'string' ? comp : comp.str();
+        // @ts-ignore - The following line is constructed correctly.
+        return typeof Dom.__components[comp] !== 'undefined';
+    }
+
+    /*
+     * Function:  componentFactory
+     *
+     * Description:  A support function to look for a match when a query spec element is a request for a tag type.
+     *
+     * @param  eleID  The requested tag type specified in the string.
+     *
+     * @return  null|HTMLElement[]  A null for an error, otherwise returns the requested component instance.
+     */
+    static componentFactory(comp: string|Strings, theParent: Dom, params: object = {}): any {
+        window.console.error("Dom::componentFactory - This function must be overridden in the project class");
+        return null;
+    }
+
+
+
+
+
+
+
+
+
 
 
     /*
@@ -471,6 +541,41 @@ class Dom implements Named {
         }
         this.__core.setAttribute(attName, attVal);
         return this;
+    }
+
+    /*
+     * Function:  atts
+     *
+     * Description:  A function used for getting the attributes on a Dom element.
+     *
+     * @return  object  Returns an object containing the attribute values.
+     */
+    public atts(): object {
+        let keys = [];
+        let dict = {keys: null};
+
+        let size = this.__core.attributes.length ?? 0;
+        for(let index=0; index<size; index++) {
+            let key = this.__core.attributes[index].localName;
+            let val = new Strings(this.__core.attributes[key].nodeValue);
+
+            if (val.isNumeric()) {
+                // @ts-ignore - The following line is constructed correctly.
+                dict[key] = val.number();
+            } else if (val.isJSON()) {
+                // @ts-ignore - The following line is constructed correctly.
+                dict[key] = val.jsonParse();
+            } else {
+                // @ts-ignore - The following line is constructed correctly.
+                dict[key] = val;//.str();
+            }
+
+            keys.push(key);
+        }
+
+        // @ts-ignore - The following line is constructed correctly.
+        dict.keys = keys;
+        return dict;
     }
 
     /*

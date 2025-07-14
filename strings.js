@@ -553,6 +553,24 @@ class Strings {
         return this;
     }
     /*
+     * Function:  isJSON
+     *
+     * Description:  Evaluates the contained string to see if it is a valid JSON representation.
+     *
+     * @param  none
+     *
+     * @return  boolean  Returns true if a valid JSON representation and false otherwise.
+     */
+    isJSON() {
+        try {
+            JSON.parse(this.__core);
+        }
+        catch (e) {
+            return false;
+        }
+        return true;
+    }
+    /*
      * Function:  jsonParse
      *
      * Description:  Convert the contained string to a JSON object.
@@ -666,5 +684,52 @@ class Strings {
      */
     length() {
         return this.__core.length;
+    }
+    /*
+     * Function:  isNumeric
+     *
+     * Description:  Evaluates the string as a valid representation of a number.
+     *
+     * @return  boolean  Returns true if the string is a valid representation of a number, false otherwise.
+     */
+    isNumeric() {
+        // @ts-ignore - Chosing to ignore this error
+        return !isNaN(parseFloat(this.__core)) && isFinite(this.__core);
+    }
+    /*
+     * Function:  number
+     *
+     * Description:  Convert the numberic representation to a number.
+     *
+     * @return  boolean  Return false if not a valid representation of a number, otherwise returns numeric version of
+     *                   the string.
+     */
+    number() {
+        if (this.isNumeric()) {
+            return Number(this.__core);
+        }
+        return false;
+    }
+    /*
+     * Function:  lower
+     *
+     * Description:  Make the string all lower case characters.
+     *
+     * @return  Strings  The string converted.
+     */
+    lower() {
+        this.__core = this.__core.toLowerCase();
+        return this;
+    }
+    /*
+     * Function:  upper
+     *
+     * Description:  Make the string all upper case characters.
+     *
+     * @return  Strings  The string converted.
+     */
+    upper() {
+        this.__core = this.__core.toUpperCase();
+        return this;
     }
 }

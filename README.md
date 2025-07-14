@@ -23,7 +23,10 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
-V10 - July 5     - Bug fix in Dom::find now able to find tag elements.
+V11 - July 13    - Added component support function to Dom.  Also added new attributes function, atts, to Dom as well.
+                   Strings has new function isJSON, isNumeric, number, lower and upper.
+
+V10 - July 5     - Bug fix in Dom::find.  Now able to find tag elements.
 
 V9 - July 4      - Added a new function "svg" to the dom utility, but this is only a prototype and is not ready for 
                    general use as it is coded for only a specific project for now.

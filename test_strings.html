@@ -132,6 +132,10 @@
             testCompare("Test 3ag5 - replace() - needle is empty", 'abcdefghi', subject.replace('', 'xxx').str());
             subject = new Strings('abcdefghi');
             testCompare("Test 3ag6 - replace() - needle not found", 'abcdefghi', subject.replace('yyy', 'XXX').str());
+            subject = new Strings('ABC');
+            testCompare("Test 3ah1 - lower()", 'abc', subject.lower().str());
+            subject = new Strings('abc');
+            testCompare("Test 3ah2 - lower()", 'ABC', subject.upper().str());
 
             testLabel('Conversion/Condition Functions');
             subject = new Strings('<div class="thing">stuff</div></br>');
@@ -170,6 +174,12 @@
             testCompare("Test 4e10 - jsonStringify()", 'a', result.anArray[3]);
             testCompare("Test 4e11 - jsonStringify()", 'b', result.anArray[4]);
             testCompare("Test 4e12 - jsonStringify()", 'c', result.anArray[5]);
+            subject.jsonStringify(stimulus);
+            testCompare("Test 4f1 - isJSON()", true, subject.isJSON());
+            subject = new Strings('{"x":true}');
+            testCompare("Test 4f2 - isJSON()", true, subject.isJSON());
+            subject = new Strings('obviously not JSON');
+            testCompare("Test 4f1 - isJSON()", false, subject.isJSON());
 
             testLabel('Miscellaneous');
             subject = new Strings('');
@@ -207,6 +217,24 @@
             testCompare("Test 9i1 - length", 3, subject.length());
             subject = new Strings('1234');
             testCompare("Test 9i2 - length", 4, subject.length());
+            subject = new Strings('123');
+            testCompare("Test 9j1 - isNumeric", true, subject.isNumeric());
+            subject = new Strings('123.456');
+            testCompare("Test 9j1 - isNumeric", true, subject.isNumeric());
+            subject = new Strings('-123');
+            testCompare("Test 9j2 - isNumeric", true, subject.isNumeric());
+            subject = new Strings('definitely not a number');
+            testCompare("Test 9j3 - isNumeric", false, subject.isNumeric());
+            subject = new Strings('123');
+            testCompare("Test 9k1 - isNumeric", 123, subject.number());
+            subject = new Strings('123.456');
+            testCompare("Test 9k1 - isNumeric", 123.456, subject.number());
+            subject = new Strings('abc');
+            testCompare("Test 9k1 - isNumeric", false, subject.number());
+
+
+
+
         }
     </script>
 </head>

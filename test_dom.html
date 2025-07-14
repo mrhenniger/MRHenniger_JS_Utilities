@@ -155,9 +155,16 @@
             testCompare("Test 5g - element utilities", 123, foundEle.val());
             let deleteChild = Dom.create('div', {class: 'deleteChild'}).innerHTML('delete child');
             scratch.prepend(deleteChild);
-            testCompare("Test 6a - element utilities (delete)", 1, scratch.find('.deleteChild').getSize());
+            testCompare("Test 5h - element utilities (delete)", 1, scratch.find('.deleteChild').getSize());
             deleteChild.delete();
-            testCompare("Test 6b - element utilities (delete)", 0, scratch.find('.deleteChild').getSize());
+            testCompare("Test 5i - element utilities (delete)", 0, scratch.find('.deleteChild').getSize());
+            scratch.innerHTMLWipe();
+            scratch.innerHTML('<subject thinga="123" thingb="abc"/>');
+            subject = scratch.find('subject').first();
+            result = subject.atts();
+            testCompare("Test 5j1 - atts", 2, result['keys'].length);
+            testCompare("Test 5j2 - atts", 123, result['thinga']);
+            testCompare("Test 5j3 - atts", "abc", result['thingb'].str());
 
             testLabel('class utilities');
             scratch.innerHTMLWipe();
@@ -237,7 +244,12 @@
             //        therefore these tests can not be implemented.
             scratch.innerHTMLWipe();
 
-            testLabel('focus');
+            testLabel('components');
+            Dom.componentRegister(['abc', 'ghi']);
+            testCompare("Test 10a1 - componentRegister", true,  Dom.componentValid('abc'));
+            testCompare("Test 10a2 - componentRegister", false, Dom.componentValid('def'));
+            testCompare("Test 10a3 - componentRegister", true,  Dom.componentValid('ghi'));
+            testCompare("Test 10b - componentRegister",  null,  Dom.componentFactory('does not matter', scratch, {txt: 'this should fail'}));
 
 
 
@@ -245,9 +257,7 @@
 
 
 
-
-
-
+            testLabel('TESTS COMPLETE!!!!!!!!!!');
         }
     </script>
 </head>
