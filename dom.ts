@@ -141,7 +141,7 @@ class Dom implements Named {
      */
     public innerHTMLAppend(newContent: string|Strings): Dom {
         newContent = typeof newContent === 'string' ? newContent : newContent.str(); // Ensure eleID is a string
-        this.__core.innerHTML = this.__core.innerHTML + newContent;
+        this.__core.innerHTML += newContent;
         return this;
     }
 

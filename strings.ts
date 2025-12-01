@@ -737,12 +737,13 @@ class Strings implements Named {
      * Description:  Generate a random string of characters
      *
      * @param  length  The desired length of the string.  This parameter is optional and has a default value of 10.
+     * @param  seeds   The pool of source characters for generating the random string.
      *
      * @return  Strings  The randomly generated string.
      */
-    public random(length: number = 10) {
+    public random(length: number = 10, seeds: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*_+-=:;<>?') {
         this.__core = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*_+-=:;<>?';
+        const characters = seeds;
         const charactersLength = characters.length;
         let counter = 0;
         while (counter < length) {
@@ -813,7 +814,5 @@ class Strings implements Named {
         this.__core = this.__core.toUpperCase();
         return this;
     }
-
-
 
 }

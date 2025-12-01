@@ -1,6 +1,7 @@
 {
   "css": [
-    "basic.css"
+    "basic.css",
+    "basic.scss"
   ],
   "js": [
     "dom.js",

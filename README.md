@@ -23,6 +23,16 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V12 - November 30 - Overhauled Component.ts to be based on web components.  Component.ts is considered to be work in
+                    progress.
+                    
+                    Minor bug fix in Dom::innerHTMLAppend.  This should be a more true append rather than a replacement
+                    of all dom components in that scope.
+                    
+                    Added functionality to Strings::random.  There is now a third parameter which allows you to provide
+                    a string of seed characters.  If you do not provide that seed string you get the default character
+                    set:  ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*_+-=:;<>?
+                    
 V11 - July 13    - Added component support function to Dom.  Also added new attributes function, atts, to Dom as well.
                    Strings has new function isJSON, isNumeric, number, lower and upper.
 

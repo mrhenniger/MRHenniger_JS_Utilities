@@ -1,7 +1,7 @@
 /*
     Class:  Components
-    What:  A class for generating reactive components in the dom using vanilla Javascript and therefore avoiding the
-           need for compiled frameworks.
+    What:  A class for generating reactive components in the dom using vanilla Javascript and web components and
+           therefore avoiding the need for compiled frameworks.
     Usage:  Free to use in your projects, just maintain this comment block with full credit to the author.
     Author:  Mike Henniger
     Initial version date:  January 2025
@@ -12,14 +12,15 @@
                      find the need.  If you would like to suggest additional features, I would very much like to hear
                      from you.
  */
-class Components implements Named {
+class Components extends HTMLElement {
     protected __parent: null|Dom;
-    className: string;
+    public className: string;
+    private __createType: string;
     protected __template: null|Strings;
     protected __core: null|Dom;
-    protected __data: null|object;
-    protected __attributes: null|object;
-    protected __handlers: null|object;
+    protected __data: object;
+    protected __attributes: object;
+    protected __handlers: object;
 
     /*
      * Function:  constructor
@@ -29,21 +30,88 @@ class Components implements Named {
      * @param  newMods    The values to be installed in the template.
      * @param  newAttributes  Attributes to be applied to the instance of this component.
      */
-    constructor(theParent: Dom, newClassName: string|Strings = 'Components') {
-        this.__parent = theParent;
-        this.className = typeof newClassName === 'string' ? newClassName : newClassName.str();
-        this.__template = null;
-        this.__core = null;
-        this.__data = null;
-        this.__attributes = null;
-        this.__handlers = null;
+    constructor(theParent: Dom|null, newClassName: string|Strings = 'Components') {
+        // Initialize element properties, attach shadow DOM, etc.
+
+        super();
+
+        this.__createType = theParent === null ? 'dom' : 'js';
+        this.__parent = theParent === null ? new Dom(this.parentElement) : theParent;
+        // @ts-ignore - Checking for undefined class name
+        if (typeof this.className === 'undefined') {
+            this.className = typeof newClassName === 'string' ? newClassName : newClassName.str();
+        }
+        this.__template   = null;
+        this.__core       = null;
+        this.__data       = {};
+        this.__attributes = {};
+        this.__handlers   = {};
 
         if (this.className === 'Components') {
             let errorMessage = 'Components::constructor - The base class should not be instantiated';
             window.console.error(errorMessage);
         }
+
+        this.__setTemplate();
+        this.__setHandlers();
     }
 
+    connectedCallback() {
+        // Called when the element is inserted into the DOM
+    }
+
+    disconnectedCallback() {
+        // Called when the element is removed from the DOM
+        this.delete();
+    }
+
+    attributeChangedCallback(name: string, oldValue: any, newValue: any): void {
+        // Called when an observed attribute changes
+    }
+
+    static get observedAttributes(): [string] {
+        // Specify which attributes to observe for changes
+        //return ['attribute-name'];
+        return [''];
+    }
+
+
+
+    /*
+     * Function:  setTemplate
+     *
+     * Description:  Define the template.  This function must be overwritten in the specialized class.
+     *
+     * @param  none
+     *
+     * @return  void
+     */
+    protected __setTemplate(): void {
+        window.console.error('Components::__setTemplate must be overwritten in the specialized class');
+    }
+
+    /*
+     * Function:  setHandlers
+     *
+     * Description:  Define the handlers.
+     *
+     * @param  none
+     *
+     * @return  void
+     */
+    protected __setHandlers(): void {
+        window.console.error('Components::__setHandlers must be overwritten in the specialized class');
+    }
+
+    /*
+     * Function:  parseSubjectAndAction
+     *
+     * Description:  Extract the subject and action.
+     *
+     * @param  event The data elements to be revised.
+     *
+     * @return  object  Returns and object with the subject and action Strings defined.
+     */
     private parseSubjectAndAction(event: string|Strings): object {
         event = typeof event === 'string' ? new Strings(event) : event;
 
@@ -56,7 +124,7 @@ class Components implements Named {
 
         // Determine if there is a signature to follow to lead to the actual subject
         const size = bits.length;
-        if (size > 1) {
+        if (size > 1 && !bits[1].equals('root')) {
             let signature = new Strings('');
 
             for (let index = 1; index < size; index++) {
@@ -70,7 +138,7 @@ class Components implements Named {
             }
         }
 
-        return { subject: subject, action: action};
+        return { subject: subject, action: action };
     }
 
     /*
@@ -91,7 +159,10 @@ class Components implements Named {
             const target = this.parseSubjectAndAction(event);
 
             // @ts-ignore - The following line is constructed correctly
-            target.subject.eventListen(target.action, this.__handlers[event]);
+            if (!!(target.subject)) {
+                // @ts-ignore - The following line is constructed correctly
+                target.subject.eventListen(target.action, this.__handlers[event]);
+            }
         });
 
         return true;
@@ -115,7 +186,10 @@ class Components implements Named {
             const target = this.parseSubjectAndAction(event);
 
             // @ts-ignore - The following line is constructed correctly
-            target.subject.eventRemove(target.action, this.__handlers[event]);
+            if (!!(target.subject)) {
+                // @ts-ignore - The following line is constructed correctly
+                target.subject.eventRemove(target.action, this.__handlers[event]);
+            }
         });
 
         return true;
@@ -126,37 +200,27 @@ class Components implements Named {
      *
      * Description:  Install the component in the dom along with the attributes and event handlers.
      *
-     * @param  none
+     * @param  newData  An object containing the data to be applied to the template.
+     * @param  newAttributes   An object containing the attributes to be applied to the component.
+     * @param  newHandlers  An object containing the handlers for elements in the component.
      *
-     * @return  boolean  Returns true for successfully removed and false if otherwise (example not in the dom).
+     * @return  boolean  Returns true for successfully applied and false if otherwise (example not in the dom).
      */
-    protected __apply(newData: object = {}, newAttributes: object = {}, newHandlers: object = {}): boolean {
+    protected __apply(newData: object = {}): boolean {
         if (this.__parent === null) {
             window.console.error(`Components::__apply - No parent for ${this.className}`);
             return false;
         }
-        if (this.__template?.className !== 'Strings') {
-            window.console.error(`Components::__apply - Template is not an instance of Strings for ${this.className}`);
-            return false;
-        }
 
-        // Add to the dom
-        this.__attributes = newAttributes;
-        this.__core = Dom.create(this.className, this.__attributes);
-        if (this.__core) {
-            this.__reapplyData(newData);
-            // @ts-ignore - Checked for null on this.__parent above
-            //this.__parent.innerHTMLWipe().append(this.__core); I DON'T THINK IT WILL WORK TO WIPE THE PARENT
+        if (this.__createType === 'dom') {
+            this.__core = new Dom(this);
+        } else { // create type is js
+            this.__core = Dom.create(this.className, this.__attributes);
             this.__parent.append(this.__core);
-
-
-            // Setup listeners
-            this.__handlers = newHandlers;
-            this.addListeners();
-        } else {
-            window.console.error(`Components::__apply - Failed to create ${this.className}`);
-            return false;
         }
+        this.removeListeners();
+        this.__reapplyData(newData);
+        this.addListeners();
 
         return true;
     }
@@ -166,7 +230,7 @@ class Components implements Named {
      *
      * Description:  Render the data in the dom.
      *
-     * @param  none
+     * @param  newData  An object containing the data to be applied to the template.
      *
      * @return  boolean  Returns true if the data is successfully rendered with the template, false otherwise.
      */
@@ -204,18 +268,20 @@ class Components implements Named {
      * @return  boolean  Returns true at least one item was revised, false otherwise.
      */
     protected reviseData(newData: object): boolean {
-        let copy = this.__data;
-
         let newKeys = Object.keys(newData);
         if (newKeys.length === 0) {
             return false;
         }
 
+        let copy = this.__data;
+
         newKeys.forEach(key => {
             // @ts-ignore - The following line is constructed correctly
             copy[key] = newData[key];
         });
+        this.removeListeners();
         this.__reapplyData(copy);
+        this.addListeners();
 
         return true;
     }
@@ -258,5 +324,35 @@ class Components implements Named {
      */
     public destroy(): boolean {
         return this.delete();
+    }
+
+    /*
+     * Function:  __clearAttributes
+     *
+     * Description:  Remove all attributes on the dom object other than the class.
+     *
+     * @param  none
+     *
+     * @return  void
+     */
+    protected __clearAttributes(): void {
+        let atts = [...this.attributes].filter((attr) => attr.name !== 'class');
+        while(atts.length > 0) {
+            this.removeAttribute(atts[0].name);
+            atts = [...this.attributes].filter((attr) => attr.name !== 'class');
+        }
+    }
+
+    /*
+     * Function:  getCore
+     *
+     * Description:  Return the contained Dom object.
+     *
+     * @param  none
+     *
+     * @return  Dom  The contained Dom object is returned.
+     */
+    public getCore(): Dom|null {
+        return this.__core;
     }
 }

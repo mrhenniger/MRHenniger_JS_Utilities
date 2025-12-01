@@ -127,7 +127,7 @@ class Dom {
      */
     innerHTMLAppend(newContent) {
         newContent = typeof newContent === 'string' ? newContent : newContent.str(); // Ensure eleID is a string
-        this.__core.innerHTML = this.__core.innerHTML + newContent;
+        this.__core.innerHTML += newContent;
         return this;
     }
     /*
