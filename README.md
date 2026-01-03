@@ -23,6 +23,10 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V13 - Jan 3 - Some improvements to components.ts inspired by the development of the Binary Switch component.
+
+20256:  Happy new year!!!!!!!
+
 V12 - November 30 - Overhauled Component.ts to be based on web components.  Component.ts is considered to be work in
                     progress.
                     

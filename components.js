@@ -292,6 +292,22 @@ class Components extends HTMLElement {
         }
     }
     /*
+     * Function:  __getAttribute
+     *
+     * Description:  Return a selected attribute value or a specified default
+     *
+     * @param  attName  The attribution designation for which the value to be retrieved.
+     * @param  dft  The default value to be returned if the attribute does not exist.
+     *
+     * @return  string  The desired attribute value.
+     */
+    __getAttribute(attName, dflt = '') {
+        var _a;
+        attName = typeof attName === 'string' ? attName : attName.str();
+        const attArr = [...this.attributes].filter((attr) => attr.nodeName === attName);
+        return (attArr.length > 0) ? ((_a = attArr[0].nodeValue) !== null && _a !== void 0 ? _a : dflt) : dflt;
+    }
+    /*
      * Function:  getCore
      *
      * Description:  Return the contained Dom object.
@@ -302,5 +318,17 @@ class Components extends HTMLElement {
      */
     getCore() {
         return this.__core;
+    }
+    /*
+     * Function:  __generateIdentifier
+     *
+     * Description:  Return the contained Dom object.
+     *
+     * @param  none
+     *
+     * @return  string  A string of 10 random upper and lower case alpha characters.
+     */
+    __generateIdentifier() {
+        return new Strings().random(10, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz').str();
     }
 }
