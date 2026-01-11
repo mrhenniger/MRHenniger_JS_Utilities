@@ -104,6 +104,26 @@ class Components extends HTMLElement {
     }
 
     /*
+     * Function:  addHandlers
+     *
+     * Description:  Add or modify a handler in the collection.
+     *
+     * @param  theHandlers  An object containing then handlers to be added to the collection of handlers.
+     *
+     * @return  void
+     */
+    protected addHandlers(theHandlers: object): void {
+        this.removeListeners();
+
+        Object.keys(theHandlers).forEach(key => {
+            // @ts-ignore - The following line is constructed correctly
+            this.__handlers[key] = theHandlers[key];
+        });
+
+        this.addListeners();
+    }
+
+    /*
      * Function:  parseSubjectAndAction
      *
      * Description:  Extract the subject and action.

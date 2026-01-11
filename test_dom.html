@@ -165,6 +165,8 @@
             testCompare("Test 5j1 - atts", 2, result['keys'].length);
             testCompare("Test 5j2 - atts", 123, result['thinga']);
             testCompare("Test 5j3 - atts", "abc", result['thingb'].str());
+            testCompare("Test 5k1 - hasAtt", true, subject.hasAtt('thinga'));
+            testCompare("Test 5k2 - hasAtt", false, subject.hasAtt('does_not_exist'));
 
             testLabel('class utilities');
             scratch.innerHTMLWipe();

@@ -23,6 +23,12 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V14 - Jan 11 - Added addHandlers function to Components.  This allows new handlers to be added to components dynamically
+               rather than as a fix defined set in the component definition.
+             - Also fixed a bug in the Dom att() function.  There was no default value on the second parameter.  Do not
+               know how this worked before.
+             - Added a hasAtt (has attribute) function to Dom.
+
 V13 - Jan 3 - Some improvements to components.ts inspired by the development of the Binary Switch component.
 
 20256:  Happy new year!!!!!!!

@@ -43,7 +43,8 @@ class Dom {
         }
         else if (refType === 'object'
             && ((typeof ref.name === 'undefined')
-                || (ref.name === ''))
+                || (ref.name === '')
+                || (typeof ref.childNodes !== 'undefined'))
             && typeof ref.ownerDocument !== 'undefined') {
             this.__core = ref;
         }
@@ -472,13 +473,26 @@ class Dom {
      *
      * @return  Dom  Returns self to allow for chaining of commands.
      */
-    att(attName, attVal) {
+    att(attName, attVal = null) {
         attName = typeof attName === 'string' ? attName : attName.str();
-        if (typeof attVal === 'undefined') {
+        if (attVal === null) {
             return this.__core.getAttribute(attName);
         }
         this.__core.setAttribute(attName, attVal);
         return this;
+    }
+    /*
+     * Function:  hasAtt
+     *
+     * Description:  A function used to determine if an attribute exists on the HTMLElement.
+     *
+     * @param  attName  A string representing the name of the attribute.
+     *
+     * @return  bool  Returns true if the attribute exists, false otherwise.
+     */
+    hasAtt(attName) {
+        attName = typeof attName === 'string' ? attName : attName.str();
+        return this.__core.hasAttribute(attName);
     }
     /*
      * Function:  atts

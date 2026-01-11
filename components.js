@@ -83,6 +83,23 @@ class Components extends HTMLElement {
         window.console.error('Components::__setHandlers must be overwritten in the specialized class');
     }
     /*
+     * Function:  addHandlers
+     *
+     * Description:  Add or modify a handler in the collection.
+     *
+     * @param  theHandlers  An object containing then handlers to be added to the collection of handlers.
+     *
+     * @return  void
+     */
+    addHandlers(theHandlers) {
+        this.removeListeners();
+        Object.keys(theHandlers).forEach(key => {
+            // @ts-ignore - The following line is constructed correctly
+            this.__handlers[key] = theHandlers[key];
+        });
+        this.addListeners();
+    }
+    /*
      * Function:  parseSubjectAndAction
      *
      * Description:  Extract the subject and action.

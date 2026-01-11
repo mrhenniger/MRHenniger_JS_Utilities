@@ -48,6 +48,7 @@ class Dom implements Named {
             && (
                 (typeof ref.name === 'undefined')
                 || (ref.name === '')
+                || (typeof ref.childNodes !== 'undefined')
             )
             && typeof ref.ownerDocument !== 'undefined'
         ) {
@@ -533,14 +534,29 @@ class Dom implements Named {
      *
      * @return  Dom  Returns self to allow for chaining of commands.
      */
-    public att(attName: string|Strings, attVal: any): any {
+    public att(attName: string|Strings, attVal=null): any {
         attName = typeof attName === 'string' ? attName : attName.str();
 
-        if (typeof attVal === 'undefined') {
+        if (attVal === null) {
             return this.__core.getAttribute(attName);
         }
         this.__core.setAttribute(attName, attVal);
         return this;
+    }
+
+    /*
+     * Function:  hasAtt
+     *
+     * Description:  A function used to determine if an attribute exists on the HTMLElement.
+     *
+     * @param  attName  A string representing the name of the attribute.
+     *
+     * @return  bool  Returns true if the attribute exists, false otherwise.
+     */
+    public hasAtt(attName: string|Strings): any {
+        attName = typeof attName === 'string' ? attName : attName.str();
+
+        return this.__core.hasAttribute(attName);
     }
 
     /*
