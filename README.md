@@ -23,6 +23,8 @@ https://www.linkedin.com/in/mikehenniger/
 
 Revision log...
 
+V15 - Jan 11 - Components refactor.  Add construct functions.
+
 V14 - Jan 11 - Added addHandlers function to Components.  This allows new handlers to be added to components dynamically
                rather than as a fix defined set in the component definition.
              - Also fixed a bug in the Dom att() function.  There was no default value on the second parameter.  Do not

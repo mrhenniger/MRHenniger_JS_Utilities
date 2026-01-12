@@ -26,11 +26,15 @@ class Components extends HTMLElement {
      * Function:  constructor
      *
      * @param  theParent  The element to which this new element is attached.
+     * @param  core          The Dom element of an already established component.
      * @param  newClassName  Used to identify the component family.
-     * @param  newMods    The values to be installed in the template.
-     * @param  newAttributes  Attributes to be applied to the instance of this component.
      */
-    constructor(theParent: Dom|null, newClassName: string|Strings = 'Components') {
+    constructor(
+        theParent: Dom|null = null,
+        params: object = {},
+        core: Dom|null = null,
+        newClassName: string|Strings = 'Components'
+    ) {
         // Initialize element properties, attach shadow DOM, etc.
 
         super();
@@ -54,6 +58,35 @@ class Components extends HTMLElement {
 
         this.__setTemplate();
         this.__setHandlers();
+
+        // Construction Method #1:  Creating by JS command
+        if (theParent !== null) {
+            this.__constructParent(theParent, params);
+        }
+
+        // Construction Method #2:  Attaching to what is already in the dom
+        //                          <input-text class='it-medium it-blue'><input value="${val}" required readonly minLen="1" maxLen="10" len="5" spellcheck="true" placeholder="stuff"/></input-text>
+        else if (core !== null) {
+            this.__constructCore(core);
+        }
+
+        // Construction Method #3:  DOM Instantiated
+        //                          <input-text class="1a2b3c4de5" val="abc123" req="false" ro="false" minlen="1" maxlen="10" len="5" spell="true" ph="stuff" size="it-medium" style="it-blue"/>`;
+        else {
+            this.__constructDom();
+        }
+    }
+
+    private __constructParent(theParent: Dom, params: object): void {
+        window.console.error('Components::__constructParent - Must be overwritten in the specialized class');
+    }
+
+    private __constructCore(core: Dom): void {
+        window.console.error('Components::__constructCore - Must be overwritten in the specialized class');
+    }
+
+    private __constructDom(): void {
+        window.console.error('Components::__constructDom - Must be overwritten in the specialized class');
     }
 
     connectedCallback() {
